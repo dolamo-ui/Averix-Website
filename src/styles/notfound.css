@@ -1,0 +1,17 @@
+/* 404 page. Uses the shared shell in site.css. */
+.pg-site .nf{position:relative;min-height:100svh;display:flex;align-items:center;padding:140px var(--pad) 90px;overflow:hidden;isolation:isolate;background:radial-gradient(55% 80% at 80% 25%,rgba(123,52,255,.34),transparent 70%),radial-gradient(35% 50% at 8% 100%,rgba(0,229,255,.14),transparent 70%),var(--bg)}
+.pg-site .nf:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(115deg,transparent 0 120px,rgba(255,255,255,.025) 120px 121px)}
+.pg-site .nf-bg{position:absolute;right:-6%;top:50%;width:min(58vw,640px);aspect-ratio:1;transform:translateY(-50%);z-index:-1;pointer-events:none}
+.pg-site .nf-bg i{position:absolute;left:50%;top:50%;border-radius:50%;border:1px solid rgba(0,229,255,.35);transform:translate(-50%,-50%)}
+.pg-site .nf-bg .r1{width:100%;aspect-ratio:1;border-style:dashed;animation:site-nf-sp 44s linear infinite}
+.pg-site .nf-bg .r2{width:64%;aspect-ratio:1;border-top-color:var(--cy);animation:site-nf-sp 26s linear infinite reverse}
+@keyframes site-nf-sp{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.pg-site .nf-in{max-width:720px}
+.pg-site .nf .code{font:800 clamp(6rem,22vw,15rem)/.85 var(--f);color:transparent;-webkit-text-stroke:2px var(--cy);text-shadow:0 0 60px rgba(0,229,255,.3);margin:.2rem 0 1.4rem;letter-spacing:-.02em}
+.pg-site .nf h1{font-size:clamp(1.8rem,4.4vw,3.4rem);font-weight:800;line-height:.98;text-transform:uppercase;letter-spacing:-.01em}
+.pg-site .nf .lead{margin-top:1.2rem;max-width:46ch;color:#c4c8d6;font-size:1.05rem}
+.pg-site .nf .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:2rem}
+.pg-site .nf-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:2.4rem}
+.pg-site .nf-links a{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;padding:.55rem 1rem;border:1px solid var(--ln);border-radius:999px;color:var(--mu);transition:color .2s,border-color .2s}
+.pg-site .nf-links a:hover{color:var(--tx);border-color:var(--cy)}
+@media(max-width:800px){.pg-site .nf-bg{opacity:.4;right:-30%;width:90vw}}

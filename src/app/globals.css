@@ -1,0 +1,26 @@
+/* Page-specific styles live in src/styles/<page>.css, scoped under .pg-<page>. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 150px;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #05060a;
+  color: #f2f4fa;
+  font: 400 1rem/1.6 'Tomorrow', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

@@ -1,0 +1,29 @@
+/* Privacy Policy and Terms & Conditions. Uses the shared shell in site.css. */
+.pg-site .lg-head{position:relative;overflow:hidden;isolation:isolate;padding:clamp(130px,15vw,190px) var(--pad) clamp(40px,6vw,72px);background:radial-gradient(55% 80% at 85% 20%,rgba(123,52,255,.34),transparent 70%),radial-gradient(35% 50% at 8% 100%,rgba(0,229,255,.12),transparent 70%),var(--bg)}
+.pg-site .lg-head:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(115deg,transparent 0 120px,rgba(255,255,255,.025) 120px 121px)}
+.pg-site .lg-head h1{font-size:clamp(2.4rem,7vw,5.4rem);line-height:.92;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;max-width:14ch}
+.pg-site .lg-head .lead{margin-top:1.4rem;max-width:50ch;font-size:1.08rem;color:#c4c8d6}
+.pg-site .lg-head .upd{margin-top:1.4rem;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mu)}
+.pg-site .lg-wrap{display:grid;grid-template-columns:240px minmax(0,1fr);gap:clamp(28px,5vw,80px);padding:clamp(40px,6vw,72px) var(--pad) 0;align-items:start}
+.pg-site .lg-toc{position:sticky;top:110px;border-left:1px solid var(--ln);padding-left:1.2rem}
+.pg-site .lg-toc b{display:block;font-size:.65rem;letter-spacing:.26em;text-transform:uppercase;color:var(--cy);margin-bottom:.9rem}
+.pg-site .lg-toc ol{list-style:none;display:grid;gap:.55rem}
+.pg-site .lg-toc a{font-size:.8rem;color:var(--mu);transition:color .2s}.pg-site .lg-toc a:hover{color:var(--tx)}
+.pg-site .lg-body{max-width:760px}
+.pg-site .lg-body section{padding:0 0 clamp(28px,4vw,44px);margin-bottom:clamp(28px,4vw,44px);border-bottom:1px solid var(--ln);scroll-margin-top:120px}
+.pg-site .lg-body h2{display:flex;align-items:baseline;gap:1rem;font-size:clamp(1.3rem,2.4vw,1.8rem);font-weight:800;line-height:1.1;text-transform:uppercase;margin-bottom:1.1rem}
+.pg-site .lg-body h2 em{font-style:normal;font-size:.8rem;letter-spacing:.2em;color:var(--cy)}
+.pg-site .lg-body p{margin-top:.9rem;color:#b7bccd}
+.pg-site .lg-body p:first-of-type{margin-top:0}
+.pg-site .lg-body ul{list-style:none;display:grid;gap:.7rem;margin-top:.9rem}
+.pg-site .lg-body li{position:relative;padding-left:1.3rem;color:#b7bccd}
+.pg-site .lg-body li:before{content:"";position:absolute;left:0;top:.7em;width:7px;height:7px;background:var(--cy);clip-path:polygon(0 0,100% 50%,0 100%)}
+.pg-site .lg-body b{color:var(--tx)}
+.pg-site .lg-body a{color:var(--cy);border-bottom:1px solid rgba(0,229,255,.4)}.pg-site .lg-body a:hover{border-bottom-color:var(--cy)}
+.pg-site .lg-end{display:flex;gap:1.6rem;flex-wrap:wrap;margin-top:0}
+.pg-site .lg-end a{font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+@media(max-width:900px){
+ .pg-site .lg-wrap{grid-template-columns:1fr}
+ .pg-site .lg-toc{position:static;border-left:0;border-bottom:1px solid var(--ln);padding:0 0 1.2rem}
+ .pg-site .lg-toc ol{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+}
