@@ -147,8 +147,8 @@ export default function MusicPage() {
               </svg>
             </div>
             <div className="way-b">
-              <h3>Original Music &amp; Sound Design</h3>
-              <p>In-house produced music, sound effects and immersive audio designed for Averix games and experiences.</p>
+              <h3>Soundtracks and Instrumentals</h3>
+              <p>In house produced instrumentals and immersive audio designed for Averix games and experiences.</p>
               <button className="gk" type="button" data-msg="The sound design showcase is coming soon.">View Sound Design &rarr;</button>
             </div>
           </article>

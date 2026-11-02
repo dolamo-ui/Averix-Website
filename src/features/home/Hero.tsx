@@ -84,7 +84,11 @@ export default function Hero() {
       </div>
       <HeroScene />
       <div className="hc">
-        <div className="tag" data-in="">INDEPENDENT GAME STUDIO · BUILDING WHAT&apos;S NEXT</div>
+        <div className="tag" data-in="">
+          <span>INDEPENDENT GAME STUDIO</span>
+          <span className="tag-dot" aria-hidden="true"> · </span>
+          <span>BUILDING WHAT&apos;S NEXT</span>
+        </div>
         <h1>
           <span className="ln"><span>We build</span></span>
           <span className="ln"><span className="g">worlds.</span></span>

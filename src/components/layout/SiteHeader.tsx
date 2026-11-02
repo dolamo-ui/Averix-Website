@@ -5,8 +5,12 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { NAV_ITEMS } from '@/lib/site';
 
+/** Pages that get their own spot in the phone header row; everything else lives under "More". */
+const PHONE_MAIN: readonly string[] = ['/', '/games', '/events', '/community'];
+
 export default function SiteHeader() {
   const pathname = usePathname();
+  const onOther = !PHONE_MAIN.some((h) => (h === '/' ? pathname === '/' : pathname.startsWith(h)));
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -75,6 +79,31 @@ export default function SiteHeader() {
           })}
         </ul>
       </nav>
+      {/* Phones: the main pages as text links, "More" opens the full menu. Wider tablets show every page. */}
+      <div className="mx-strip" role="navigation" aria-label="Pages">
+        {NAV_ITEMS.map(({ href, label }) => {
+          const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+          const main = PHONE_MAIN.includes(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`${active ? 'on' : ''}${main ? '' : ' x'}`.trim() || undefined}
+              aria-current={active ? 'page' : undefined}
+            >
+              {label}
+            </Link>
+          );
+        })}
+        <button
+          type="button"
+          className={`more${onOther ? ' on' : ''}`}
+          aria-label="More pages"
+          onClick={() => window.dispatchEvent(new Event('averix:menu'))}
+        >
+          More
+        </button>
+      </div>
     </header>
   );
 }

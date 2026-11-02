@@ -950,3 +950,337 @@ html.lite video {
     transition: none !important;
   }
 }
+
+/* ==========================================================================
+   PHONE AND TABLET POLISH
+   One clean header (logo + menu button + a quiet row of page names), no bottom
+   bar, calmer hero, every card visible. Desktop (above 900px) is untouched.
+   ========================================================================== */
+.mx-strip {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  /* ---------- header: slim bar, page names underneath ---------- */
+  body .mx header {
+    inset: calc(env(safe-area-inset-top, 0px) + 10px) 14px auto 14px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 5px 5px 0 10px;
+    gap: 0 8px;
+    border-radius: 26px;
+    background: rgba(10, 12, 22, 0.78);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  }
+  body .mx header .brand {
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    gap: 10px;
+  }
+  body .mx header .brand img {
+    width: 34px;
+    height: 34px;
+    padding: 6px;
+  }
+  body .mx #mb {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.07);
+    border-color: transparent;
+  }
+  body .mx header .mx-strip {
+    order: 3;
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+    margin: 2px -5px 0 -10px;
+    padding: 0 6px;
+    max-height: 40px;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
+  }
+  body .mx header .mx-strip a,
+  body .mx header .mx-strip button {
+    flex: 1 1 0;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 4px;
+    margin: 0;
+    border: 0;
+    background: none;
+    font: 600 0.62rem var(--f, 'Tomorrow', system-ui, sans-serif);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--mu, #8d93a8);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  body .mx header .mx-strip .x {
+    display: none;
+  }
+  body .mx header .mx-strip .on {
+    color: var(--cy, #00e5ff);
+  }
+  body .mx header .mx-strip .on::after {
+    content: '';
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    bottom: 3px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--cy, #00e5ff);
+  }
+  /* tuck the page names away while reading down, bring them back on scroll up */
+  html[data-mx-down] body .mx header .mx-strip {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    border-top-color: transparent;
+    pointer-events: none;
+  }
+  html[data-mx-down] body .mx header {
+    padding-bottom: 5px;
+  }
+
+  /* ---------- no bottom bar: release the space it used ---------- */
+  body .mx footer {
+    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+  body .mx #toast {
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  body .pg-ip #rvb {
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ---------- hero: breathing room and a readable hierarchy ---------- */
+  body .pg-home #hero {
+    padding: calc(env(safe-area-inset-top, 0px) + 128px) 24px calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+  body .pg-home .frame:after {
+    background: linear-gradient(180deg, rgba(5, 6, 10, 0.72) 0%, rgba(5, 6, 10, 0.5) 38%, rgba(5, 6, 10, 0.86) 76%, var(--bg, #05060a) 100%),
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+  }
+  body .pg-home .tag {
+    font-size: 0.62rem;
+    line-height: 1.9;
+    letter-spacing: 0.2em;
+    white-space: normal;
+    margin-bottom: 1.1rem;
+  }
+  body .pg-home .tag > span:not(.tag-dot) {
+    display: block;
+  }
+  body .pg-home .tag .tag-dot {
+    display: none;
+  }
+  body .pg-home h1 {
+    font-size: clamp(2.4rem, 12.6vw, 4.6rem);
+    line-height: 0.98;
+  }
+  body .pg-home #hero p {
+    font-size: 0.96rem;
+    line-height: 1.65;
+    max-width: 34ch;
+    margin: 1.3rem 0 1.9rem;
+  }
+  body .pg-home .cta {
+    gap: 12px;
+  }
+  body .pg-home .cta .btn {
+    min-height: 50px;
+    padding: 0.85rem 1.2rem;
+    font-size: 0.74rem;
+  }
+  /* sound toggle: small, tucked in the corner */
+  body .pg-home .snd {
+    top: auto;
+    left: auto;
+    right: 24px;
+    bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+    width: 40px;
+    height: 40px;
+    background: rgba(12, 14, 24, 0.55);
+  }
+
+  /* other pages: clear the taller header */
+  body .pg-games .gh,
+  body .pg-community .hero,
+  body .pg-ip .hero,
+  body .pg-music .mh,
+  body .pg-events .eh {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 132px);
+  }
+  body .pg-about .ph,
+  body .pg-news .ph,
+  body .pg-partnerships .ph {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 132px);
+  }
+
+  /* ---------- show everything: card rows stack instead of hiding off-screen ---------- */
+  body .mx .mx-snap {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    gap: 16px;
+    overflow: visible;
+    scroll-snap-type: none;
+    margin-inline: 0;
+    padding: 4px 0 0;
+  }
+  body .mx .mx-snap > * {
+    flex: none;
+    width: 100%;
+    max-width: none;
+    grid-column: auto;
+    grid-row: auto;
+  }
+  body .mx .mx-snap > .pj {
+    min-height: 300px;
+  }
+  body .mx .mx-snap > .pj.big {
+    min-height: 340px;
+  }
+  body .mx .mx-snap > .nc {
+    min-height: 0;
+  }
+  body .mx .mx-dots,
+  body .mx .mx-swipe {
+    display: none;
+  }
+}
+
+/* tablets and large phones: scale up instead of stretching */
+@media (min-width: 600px) and (max-width: 900px) {
+  body .mx header {
+    inset-inline: clamp(14px, 4vw, 32px);
+  }
+  body .mx header .mx-strip a,
+  body .mx header .mx-strip button {
+    font-size: 0.68rem;
+  }
+  body .pg-home #hero {
+    padding-inline: clamp(24px, 6vw, 64px);
+  }
+  body .pg-home h1 {
+    font-size: clamp(2.4rem, 12.6vw, 5.6rem);
+  }
+  body .pg-home .tag {
+    font-size: 0.72rem;
+  }
+  body .pg-home #hero p {
+    font-size: clamp(1rem, 2.4vw, 1.2rem);
+    max-width: 42ch;
+  }
+  body .pg-home .cta .btn {
+    flex: 0 1 auto;
+    min-width: 220px;
+  }
+  body .pg-home .snd {
+    right: clamp(24px, 6vw, 64px);
+  }
+}
+@media (min-width: 640px) and (max-width: 900px) {
+  body .mx .mx-snap {
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  body .mx .mx-snap > .pj.big {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ==========================================================================
+   LONG-HEADING SAFETY: the display font is wide, so very long words must never
+   push past the screen edge on narrow phones.
+   ========================================================================== */
+@media (max-width: 900px) {
+  body .mx h1,
+  body .mx h2,
+  body .mx h3 {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  body .pg-music .mh h1 {
+    font-size: clamp(1.5rem, 7.2vw, 5rem);
+  }
+}
+@media (max-width: 600px) {
+  body .pg-home h2 {
+    font-size: clamp(1.4rem, 6.6vw, 2.6rem);
+  }
+  body .pg-home #about h2 {
+    font-size: clamp(1.7rem, 8vw, 3rem);
+  }
+  body .pg-home #final h2 {
+    font-size: clamp(2rem, 9vw, 4rem);
+  }
+}
+
+/* community: schedule card and countdown must shrink with the screen */
+@media (max-width: 1000px) {
+  body .pg-community .sch {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body .pg-community .sch > * {
+    min-width: 0;
+  }
+}
+@media (max-width: 600px) {
+  body .pg-community .cd {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  body .pg-community .cd b {
+    font-size: clamp(1.5rem, 8vw, 2.4rem);
+  }
+  body .pg-community .nxt h3 {
+    font-size: clamp(1.4rem, 7vw, 2.2rem);
+  }
+}
+
+@media (max-width: 760px) {
+  body .pg-community .bx .go {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  body .pg-community .lst button {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.5rem 1rem;
+    padding: 1rem;
+  }
+  body .pg-community .lst button .pill {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+/* from 700px up there is room for every page name, so "More" is not needed */
+@media (min-width: 700px) and (max-width: 900px) {
+  body .mx header .mx-strip .x {
+    display: inline-flex;
+  }
+  body .mx header .mx-strip .more {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  body .mx header .mx-strip a,
+  body .mx header .mx-strip button {
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+}

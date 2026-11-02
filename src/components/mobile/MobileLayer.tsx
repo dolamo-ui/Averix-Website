@@ -2,42 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { DISCORD_URL } from '@/lib/site';
 
 /** Averix phone layer: bottom tab bar, full-screen menu sheet, scroll progress, tap feedback, data-saver mode. */
-
-const ICONS: Record<string, ReactNode> = {
-  home: <path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,
-  games: (
-    <>
-      <path d="M6 12h4M8 10v4" />
-      <path d="M15 12h.01M18 10h.01" />
-      <path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.6 9.4 2 14.5 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.4-1.4A2 2 0 0 1 9.8 16h4.4a2 2 0 0 1 1.4.6L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.5-.6-6.6-.7-7.3A4 4 0 0 0 17.3 5z" />
-    </>
-  ),
-  events: (
-    <>
-      <rect x="3" y="4.5" width="18" height="16.5" rx="2" />
-      <path d="M8 2.5v4M16 2.5v4M3 10h18" />
-    </>
-  ),
-  community: (
-    <>
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" />
-    </>
-  ),
-  menu: <path d="M4 7h16M4 12h16M4 17h10" />,
-};
-
-const TABS = [
-  { href: '/', label: 'Home', icon: 'home' },
-  { href: '/games', label: 'Games', icon: 'games' },
-  { href: '/events', label: 'Events', icon: 'events' },
-  { href: '/community', label: 'Squad', icon: 'community' },
-] as const;
 
 /** Every page with a one-line "what is this" so first-time visitors know where to go. */
 const SHEET_LINKS = [
@@ -48,8 +16,8 @@ const SHEET_LINKS = [
   { href: '/about', label: 'About', note: 'The studio, the team, the plan' },
   { href: '/community', label: 'Community', note: 'Discord, socials and playtests' },
   { href: '/news', label: 'News', note: 'Updates from the studio' },
-  { href: '/partnerships', label: 'Partnerships', note: 'Publishers, sponsors and brands' },
   { href: '/music', label: 'Music', note: 'Soundtrack and releases' },
+  { href: '/partnerships', label: 'Partnerships', note: 'Publishers, sponsors and brands' },
 ] as const;
 
 const SOCIALS = [
@@ -72,26 +40,23 @@ const isActive = (href: string, path: string) => (href === '/' ? path === '/' : 
 export default function MobileLayer() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const bar = useRef<HTMLDivElement>(null);
   const sheet = useRef<HTMLDivElement>(null);
   const drag = useRef({ y0: 0, dy: 0, on: false });
 
-  const setMenu = useCallback((v: boolean) => {
-    setOpen(v);
-    window.dispatchEvent(new CustomEvent('averix:menu-state', { detail: v }));
-  }, []);
+  const setMenu = useCallback((v: boolean) => setOpen(v), []);
 
   // Header button (and anything else) asks for the sheet through a window event.
   useEffect(() => {
-    const toggle = () => setOpen((o) => {
-      const n = !o;
-      window.dispatchEvent(new CustomEvent('averix:menu-state', { detail: n }));
-      return n;
-    });
+    const toggle = () => setOpen((o) => !o);
     window.addEventListener('averix:menu', toggle);
     return () => window.removeEventListener('averix:menu', toggle);
   }, []);
+
+  // Tell the header about the sheet state. Done in an effect (never inside a state updater),
+  // otherwise SiteHeader's setState runs while this component is rendering.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('averix:menu-state', { detail: open }));
+  }, [open]);
 
   // Close on navigation.
   useEffect(() => {
@@ -110,7 +75,7 @@ export default function MobileLayer() {
     };
   }, [open, setMenu]);
 
-  // Scroll progress + hide the tab bar while reading downwards.
+  // Scroll progress + tuck the header's link strip away while reading downwards.
   useEffect(() => {
     let last = window.scrollY;
     let raf = 0;
@@ -121,7 +86,7 @@ export default function MobileLayer() {
       document.documentElement.style.setProperty('--mx-p', String(max > 0 ? Math.min(1, y / max) : 0));
       if (Math.abs(y - last) > 8) {
         const nearEnd = max - y < 160;
-        setHidden(y > last && y > 240 && !nearEnd);
+        document.documentElement.toggleAttribute('data-mx-down', y > last && y > 240 && !nearEnd);
         last = y;
       }
     };
@@ -134,6 +99,7 @@ export default function MobileLayer() {
       window.removeEventListener('scroll', onScroll);
       cancelAnimationFrame(raf);
       document.documentElement.style.removeProperty('--mx-p');
+      document.documentElement.removeAttribute('data-mx-down');
     };
   }, [pathname]);
 
@@ -141,7 +107,7 @@ export default function MobileLayer() {
   useEffect(() => {
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === 'mouse') return;
-      const host = (e.target as HTMLElement).closest<HTMLElement>('.btn, .mx-q, .mx-tab, .mx-link, .pill, .ch button');
+      const host = (e.target as HTMLElement).closest<HTMLElement>('.btn, .mx-q, .mx-link, .pill, .ch button');
       if (!host) return;
       const r = host.getBoundingClientRect();
       const d = Math.max(r.width, r.height) * 1.6;
@@ -198,46 +164,9 @@ export default function MobileLayer() {
     }
   };
 
-  const tabIdx = TABS.findIndex((t) => isActive(t.href, pathname));
-  const idx = tabIdx === -1 ? 4 : tabIdx;
-
   return (
     <>
       <div className="mx-prog" aria-hidden="true"><i /></div>
-
-      <div ref={bar} className="mx-tabs" data-hide={hidden && !open} role="navigation" aria-label="Quick navigation">
-        <ul style={{ ['--i' as string]: idx }}>
-          <li className="mx-ind" aria-hidden="true" />
-          {TABS.map((t, i) => (
-            <li key={t.href}>
-              <Link
-                href={t.href}
-                className={`mx-tab${idx === i ? ' on' : ''}`}
-                aria-current={idx === i ? 'page' : undefined}
-                onClick={() => buzz()}
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS[t.icon]}</svg>
-                <span>{t.label}</span>
-              </Link>
-            </li>
-          ))}
-          <li>
-            <button
-              type="button"
-              className={`mx-tab${idx === 4 ? ' on' : ''}`}
-              aria-expanded={open}
-              aria-controls="mx-sheet"
-              onClick={() => {
-                buzz();
-                setMenu(!open);
-              }}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS.menu}</svg>
-              <span>More</span>
-            </button>
-          </li>
-        </ul>
-      </div>
 
       <div
         id="mx-sheet"

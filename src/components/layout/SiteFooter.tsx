@@ -26,9 +26,6 @@ export default function SiteFooter() {
               <Link href="/games">Games</Link>
             </li>
             <li>
-              <Link href="/music">Music</Link>
-            </li>
-            <li>
               <Link href="/events">Events</Link>
             </li>
             <li>
@@ -42,6 +39,9 @@ export default function SiteFooter() {
             </li>
             <li>
               <Link href="/news">News</Link>
+            </li>
+            <li>
+              <Link href="/music">Music</Link>
             </li>
             <li>
               <Link href="/partnerships">Partnerships</Link>
