@@ -5,6 +5,7 @@ import type { User } from 'firebase/auth';
 import { firebaseEnabled, getFirebase, NEWS_COLLECTION } from '@/lib/firebase';
 import { NEWS_POSTS } from '@/features/news/posts';
 import AdminEvents from './AdminEvents';
+import AdminEnquiries from './AdminEnquiries';
 
 const CATEGORIES = ['Studio', 'Development', 'Community', 'Events'] as const;
 
@@ -31,7 +32,8 @@ export default function AdminNews() {
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState<'news' | 'events'>('news');
+  const [tab, setTab] = useState<'news' | 'events' | 'enquiries'>('news');
+  const [newEnq, setNewEnq] = useState(0);
 
   const load = useCallback(async () => {
     try {
@@ -185,10 +187,13 @@ export default function AdminNews() {
           <div className="tabs" role="tablist">
             <button type="button" role="tab" aria-selected={tab === 'news'} onClick={() => { setTab('news'); setMsg(''); }}>News</button>
             <button type="button" role="tab" aria-selected={tab === 'events'} onClick={() => { setTab('events'); setForm(null); setMsg(''); }}>Events</button>
+            <button type="button" role="tab" aria-selected={tab === 'enquiries'} onClick={() => { setTab('enquiries'); setForm(null); setMsg(''); }}>Enquiries{newEnq > 0 ? ` (${newEnq})` : ''}</button>
           </div>
 
           {tab === 'events' ? (
             <AdminEvents setMsg={setMsg} />
+          ) : tab === 'enquiries' ? (
+            <AdminEnquiries setMsg={setMsg} onCount={setNewEnq} />
           ) : form ? (
             <form className="box" onSubmit={save}>
               <h2>{isNew ? 'New post' : 'Edit post'}</h2>

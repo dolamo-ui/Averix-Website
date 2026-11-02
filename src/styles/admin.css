@@ -27,3 +27,12 @@
 .pg-site .adm .tabs button[aria-selected=true]{color:var(--tx);border-bottom-color:var(--cy)}
 .pg-site .adm .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 @media(max-width:600px){.pg-site .adm .row3{grid-template-columns:1fr}}
+
+.pg-site .adm .enq{display:block;padding:0}
+.pg-site .adm .enq .top{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1rem 1.2rem;cursor:pointer}
+.pg-site .adm .enq .top:hover{background:rgba(255,255,255,.03)}
+.pg-site .adm .enq .body{padding:0 1.2rem 1.2rem;border-top:1px solid var(--ln)}
+.pg-site .adm .enq .msgtext{white-space:pre-wrap;margin:1rem 0;color:#c4c8d6;line-height:1.6}
+.pg-site .adm .enq .body a:not(.btn){color:var(--cy)}
+.pg-site .adm .badge{font-size:.62rem;letter-spacing:.2em;padding:.35rem .7rem;border:1px solid var(--ln);color:var(--mu);font-weight:700}
+.pg-site .adm .badge.new{color:#000;background:var(--cy);border-color:var(--cy)}

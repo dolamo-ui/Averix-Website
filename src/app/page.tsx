@@ -7,6 +7,8 @@ import { DATA_URIS } from '@/features/home/dataUris';
 import '@/styles/home.css';
 import Hero from '@/features/home/Hero';
 import SnapRow from '@/components/mobile/SnapRow';
+import HomeNews from '@/features/news/HomeNews';
+import { getNewsPosts } from '@/features/news/getNews';
 import HomeEffects from '@/features/home/HomeEffects';
 import HomeEvents from '@/features/events/HomeEvents';
 import { getEvents } from '@/features/events/getEvents';
@@ -21,7 +23,7 @@ export const metadata: Metadata = pageMeta({
 });
 
 export default async function HomePage() {
-  const { cms, failed } = await getEvents();
+  const [{ cms, failed }, { posts: newsPosts, fromCms: newsFromCms, failed: newsFailed }] = await Promise.all([getEvents(), getNewsPosts()]);
   return (
     <PageFrame page="home" scrollPad={70} reveal={false} before={
         <div className="intro" id="intro" aria-hidden="true">
@@ -241,32 +243,7 @@ export default async function HomePage() {
           </div>
           <p className="rv">Studio announcements, development updates and community news as Averix Games takes shape.</p>
         </div>
-        <SnapRow className="nw" label="Latest news">
-          <article className="nc rv">
-            <span className="pill">Studio</span>
-            <time dateTime="2026-10-01">OCT 2026</time>
-            <h3>Averix Games opens its doors</h3>
-            <p>
-              Meet the studio, the team and the long-term plan: original worlds, original IP and a community built around play.
-            </p>
-            <Link className="gk" href="/news#studio-opens">Read more →</Link>
-          </article>
-          <article className="nc rv">
-            <span className="pill">Community</span>
-            <time dateTime="2026-10-08">OCT 2026</time>
-            <h3>The Averix Discord is open</h3>
-            <p>Our home for updates, event check-ins, team finding and playtests. Come say hello and grab your roles.</p>
-            <Link className="gk" href="/news#discord-open">Read more →</Link>
-          </article>
-          <article className="nc rv">
-            <span className="pill">Development</span>
-            <time dateTime="2026-10-14">OCT 2026</time>
-            <h3>How we track every project</h3>
-            <p>From Concept to Released, every Averix game carries a clear status so you always know where it stands.</p>
-            <Link className="gk" href="/news#project-status">Read more →</Link>
-          </article>
-        </SnapRow>
-        <p className="note">Sample posts. Replace with real announcements as they happen.</p>
+        <HomeNews posts={newsPosts} fromCms={newsFromCms} failed={newsFailed} />
         <div style={{ marginTop: "2rem" }}>
           <Link className="btn p" href="/news">All news &amp; updates</Link>
         </div>

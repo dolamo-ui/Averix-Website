@@ -14,6 +14,8 @@ export const firebaseEnabled = Boolean(firebaseConfig.apiKey && firebaseConfig.p
 
 /** Name of the Firestore collection that holds the news posts. */
 export const NEWS_COLLECTION = 'newsPosts';
+/** Name of the Firestore collection that holds enquiries sent through the Partnerships form. */
+export const ENQUIRIES_COLLECTION = 'enquiries';
 /** Name of the Firestore collection that holds the events. */
 export const EVENTS_COLLECTION = 'events';
 

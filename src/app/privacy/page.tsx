@@ -30,7 +30,7 @@ const SECTIONS: LegalSection[] = [
         <ul>
           <li>
             <b>What you send us.</b> If you use the enquiry form on the <Link href="/partnerships#contact">Partnerships</Link> page, or contact us
-            by email or on Discord, we receive the details you choose to share, such as your name, email address, organisation and message.
+            by email or on Discord, we receive the details you choose to share, such as your name, email address, organisation and message. Enquiries sent through the form are stored in our secure database so we can read and reply to them.
           </li>
           <li>
             <b>Technical data.</b> Like most websites, our hosting provider automatically records basic technical information when a page is
@@ -61,6 +61,9 @@ const SECTIONS: LegalSection[] = [
         <ul>
           <li>
             <b>Hosting.</b> Our hosting provider delivers the site and keeps server logs.
+          </li>
+          <li>
+            <b>Database.</b> Google Firebase stores the news and events we publish and the enquiries you send us. Only authorised Averix team members can read enquiries.
           </li>
           <li>
             <b>Google Fonts.</b> The site loads its typefaces from Google, which means your browser contacts Google&apos;s servers and your IP
@@ -103,7 +106,7 @@ const SECTIONS: LegalSection[] = [
     title: 'How long we keep it',
     body: (
       <p>
-        We keep enquiries only as long as needed to respond and to keep a reasonable record of the conversation. Server logs are kept by our
+        We keep enquiries only as long as needed to respond and to keep a reasonable record of the conversation, and we delete them on request. Server logs are kept by our
         hosting provider for a short period under its own retention rules.
       </p>
     ),

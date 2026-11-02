@@ -71,3 +71,28 @@ Firestore > **Rules**. Use the latest `firestore.rules` from this project. It no
 - The **Home page** shows the next two upcoming events, and the **Community page** shows the match schedule (up to 6 upcoming events) with a countdown. Both come from the same Events tab, so you only enter an event once.
 - If an event has a Ticket link, its Home card and Community card get a **Buy ticket on Computicket** button.
 - With no upcoming events, these sections show a short "no events yet, join the Discord" message.
+
+---
+
+# Enquiry form saves to the admin (Enquiries tab)
+
+When someone sends the Partnerships form, the message is now **saved in your Firebase database** and shows in `/admin` > **Enquiries**.
+
+## One-time: replace the rules again (important)
+`firestore.rules` changed. It now lists the admin UID in **one place** (the `isAdmin()` function at the top) and adds an `enquiries` block. Firestore > **Rules**: paste the whole new file, put your UID in `PASTE_ADMIN_USER_UID_HERE`, **Publish**.
+Without this, the form shows "could not save" for visitors and falls back to copying the message.
+
+## Using the inbox
+- Open `/admin` > **Enquiries**. New messages have a **NEW** badge, and the tab shows how many are new once you have opened it.
+- Click a row to read it. **Reply by email** opens your email app. **Mark as handled** moves it out of "New only". **Delete** removes it.
+
+## Spam protection included
+A hidden trap field catches simple bots, a visitor must wait 30 seconds between sends, and the rules only accept messages of the expected shape and size. For stronger protection later, turn on Firebase **App Check**.
+
+## Later: automation (Make): alert the admin + save to Google Sheets
+The site is already prepared. When you are ready:
+1. In Make.com create a scenario that starts with **Webhooks > Custom webhook**. Copy the webhook URL.
+2. Add the modules **Google Sheets > Add a row** (map: type, name, email, org, message, sentAt) and **Gmail/Email > Send an email** to the admin.
+3. Put the URL in `.env.local` and in Netlify as `NEXT_PUBLIC_ENQUIRY_WEBHOOK_URL=...`, then redeploy.
+Every new enquiry is then also sent to Make. Leave it empty to keep the automation off.
+Note: the webhook URL is visible in the page code, so if you ever see junk entries, replace the URL in Make and Netlify with a new one.

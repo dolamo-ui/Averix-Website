@@ -1,23 +1,43 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Anyone can read the news (the website shows it).
-    // Only the people listed below can add, edit or delete posts.
-    match /newsPosts/{post} {
-      allow read: if true;
-      allow write: if request.auth != null
+
+    // ONE place to list the admins: paste the User UID(s) from Firebase > Authentication > Users.
+    // Several admins: ['uid-one', 'uid-two']
+    function isAdmin() {
+      return request.auth != null
         && request.auth.uid in [
           'PASTE_ADMIN_USER_UID_HERE'
         ];
     }
 
-    // Events: same rule. Use the same admin UID(s) as above.
+    // News: everyone can read, only admins can write.
+    match /newsPosts/{post} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Events: everyone can read, only admins can write.
     match /events/{event} {
       allow read: if true;
-      allow write: if request.auth != null
-        && request.auth.uid in [
-          'PASTE_ADMIN_USER_UID_HERE'
-        ];
+      allow write: if isAdmin();
+    }
+
+    // Enquiries from the Partnerships form:
+    // - anyone can SEND one (create), but only with the expected fields and sensible sizes
+    // - only admins can read, update (mark handled) or delete
+    match /enquiries/{enquiry} {
+      allow create: if request.resource.data.keys().hasOnly(['type', 'name', 'email', 'org', 'message', 'status', 'createdAt'])
+        && request.resource.data.keys().hasAll(['type', 'name', 'email', 'org', 'message', 'status', 'createdAt'])
+        && request.resource.data.status == 'new'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.type is string && request.resource.data.type.size() <= 60
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 120
+        && request.resource.data.email is string && request.resource.data.email.size() <= 200
+        && request.resource.data.email.matches('.+@.+[.].+')
+        && request.resource.data.org is string && request.resource.data.org.size() <= 160
+        && request.resource.data.message is string && request.resource.data.message.size() > 0 && request.resource.data.message.size() <= 4000;
+      allow read, update, delete: if isAdmin();
     }
   }
 }

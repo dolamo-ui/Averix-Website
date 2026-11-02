@@ -18,6 +18,12 @@ export const DISCORD_URL = 'https://discord.gg/bwHavmJuf';
  */
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://averixgame.netlify.app').replace(/\/$/, '');
 
+/**
+ * OPTIONAL automation hook. Paste a Make (or Zapier) webhook URL into NEXT_PUBLIC_ENQUIRY_WEBHOOK_URL and every new
+ * enquiry is also sent there, so Make can email the admin and add a row to a Google Sheet. Empty = off.
+ */
+export const ENQUIRY_WEBHOOK_URL = process.env.NEXT_PUBLIC_ENQUIRY_WEBHOOK_URL || '';
+
 /** Studio contact address. Leave empty until the client supplies one: the legal pages then point to the enquiry form. */
 export const CONTACT_EMAIL = '';
 
