@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from 'react';
-import { DISCORD_URL } from '@/lib/site';
+import { useSite } from '@/components/layout/SiteProvider';
 import { prefersReducedMotion } from '@/lib/motion';
 
 const Arrow = () => (
@@ -10,16 +10,17 @@ const Arrow = () => (
   </svg>
 );
 
-const SLIDES = [
+const makeSlides = (DISCORD_URL: string) => [
   { title: 'Join The Big Tournaments', text: 'Beyond esports tournaments, include a broader calendar of gaming events, conferences, and conventions. and connect with each other.', cta: 'JOIN NOW', href: '#grid' },
   { title: 'Conferences & Conventions', text: 'Explore gaming conferences, conventions and community meetups across the year, all in one calendar.', cta: 'VIEW CALENDAR', href: '#grid' },
   { title: 'Connect With Players', text: 'Meet other players, teams and creators, and keep the conversation going on the Averix Discord.', cta: 'JOIN DISCORD', href: DISCORD_URL, external: true },
 ];
-const N = SLIDES.length;
+const N = 3;
 const AUTOPLAY_MS = 5500;
 
 /** Auto-advancing, swipeable highlights carousel (arrow keys work too). */
 export default function TournamentCarousel() {
+  const SLIDES = makeSlides(useSite().discordUrl);
   const [index, setIndex] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState(0);
@@ -136,8 +137,8 @@ export default function TournamentCarousel() {
           </div>
         </div>
       </div>
-      <img className="jt-l" src="/assets/jt-left.png" alt="" width={170} height={241} />
-      <img className="jt-r" src="/assets/jt-right.png" alt="" width={178} height={241} />
+      <img className="jt-l" src="https://i.imgur.com/t4kaHWJ.png" alt="" width={170} height={241} />
+      <img className="jt-r" src="https://i.imgur.com/8RMS2vs.png" alt="" width={178} height={241} />
       <div className="jt-d">
         {SLIDES.map((s, k) => (
           <i key={s.title} className={k === index ? 'on' : undefined} data-i={k} onClick={(e) => { e.stopPropagation(); to(k); }} />

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
-import { DISCORD_URL } from '@/lib/site';
+import { useSite } from '@/components/layout/SiteProvider';
 import { prefersReducedMotion } from '@/lib/motion';
 
 interface Level {
@@ -12,18 +12,19 @@ interface Level {
   cta: { label: string; href: string; external?: boolean };
 }
 
-const LEVELS: Level[] = [
+const makeLevels = (DISCORD_URL: string): Level[] => [
   { title: 'Join the Discord', text: 'Say hello in the welcome channel and grab your roles.', unlocks: 'roles & channels', cta: { label: 'Join the Discord', href: DISCORD_URL, external: true } },
   { title: 'Follow the journey', text: 'Follow us on X, TikTok and Instagram for updates.', unlocks: 'news first', cta: { label: 'See social links', href: '#comms' } },
   { title: 'Play an event', text: 'Enter a tournament or drop in on a community night.', unlocks: 'prizes & rankings', cta: { label: 'View events', href: '/events' } },
   { title: 'Shape the games', text: 'Join playtests and share feedback with the team.', unlocks: 'early builds', cta: { label: 'Join a playtest', href: DISCORD_URL, external: true } },
 ];
 
-const N = LEVELS.length;
+const N = 4;
 const pad = (n: number) => String(n).padStart(2, '0');
 
 /** Swipeable "level up" card deck with a progress rail. */
 export default function LevelDeck() {
+  const LEVELS = makeLevels(useSite().discordUrl);
   const deck = useRef<HTMLDivElement>(null);
   const cards = useRef<Array<HTMLElement | null>>([]);
   const [active, setActive] = useState(0);

@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import SafeImg from '@/components/ui/SafeImg';
-import { CHARACTERS, type Character } from './characters';
+import type { Character } from './characters';
+
+const gameHref = (g?: string) => {
+  const m = g?.match(/alpha|beta|gamma/i);
+  return m ? `/games/${m[0].toLowerCase()}` : '/games';
+};
 
 const pad = (n: number) => String(n).padStart(2, '0');
 const cssVar = (color: string) => ({ '--c': color }) as CSSProperties;
@@ -37,7 +42,7 @@ function Portrait({ c, id }: { c: Character; id: string }) {
   );
 }
 
-function ProfileBody({ c, index }: { c: Character; index: number }) {
+function ProfileBody({ c, index, sample }: { c: Character; index: number; sample: boolean }) {
   if (!c.open) {
     return (
       <>
@@ -56,20 +61,22 @@ function ProfileBody({ c, index }: { c: Character; index: number }) {
       <span className="chip" style={cssVar(c.color)}>Profile {pad(index + 1)} · {c.role}</span>
       <h3 id="dn">{c.name}</h3>
       <dl className="fx">
-        <div><dt>Origin</dt><dd>{c.origin}</dd></div>
+        <div><dt>Origin</dt><dd>{c.origin || '—'}</dd></div>
         <div><dt>Role</dt><dd>{c.role}</dd></div>
-        <div><dt>Universe</dt><dd>{c.universe}</dd></div>
-        <div><dt>Relevant game</dt><dd>{c.game}</dd></div>
+        <div><dt>Universe</dt><dd>{c.universe || '—'}</dd></div>
+        <div><dt>Relevant game</dt><dd>{c.game || '—'}</dd></div>
       </dl>
-      <div><h4>Description</h4><p>{c.desc}</p></div>
-      <div><h4>Backstory</h4><p>{c.backstory}</p></div>
-      <div>
-        <h4>Artwork &amp; media</h4>
-        <div className="md">{c.media?.map((m) => <span key={m}>{m}<br />locked</span>)}</div>
-      </div>
-      <p className="note">Placeholder profile. Content to be replaced with final Averix IP.</p>
+      {c.desc && <div><h4>Description</h4><p>{c.desc}</p></div>}
+      {c.backstory && <div><h4>Backstory</h4><p>{c.backstory}</p></div>}
+      {!!c.media?.length && (
+        <div>
+          <h4>Artwork &amp; media</h4>
+          <div className="md">{c.media.map((m) => <span key={m}>{m}{sample && <><br />locked</>}</span>)}</div>
+        </div>
+      )}
+      {sample && <p className="note">Placeholder profile. Content to be replaced with final Averix IP.</p>}
       <div className="bt">
-        <Link className="btn p" href="/games/alpha">Relevant game</Link>
+        <Link className="btn p" href={gameHref(c.game)}>Relevant game</Link>
         <Link className="btn s" href="/community">Follow reveals</Link>
       </div>
     </>
@@ -77,7 +84,7 @@ function ProfileBody({ c, index }: { c: Character; index: number }) {
 }
 
 /** Character grid plus the modal profile dialog. */
-export default function CharacterProfiles() {
+export default function CharacterProfiles({ characters, sample }: { characters: Character[]; sample: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [selected, setSelected] = useState<number | null>(null);
 
@@ -91,12 +98,12 @@ export default function CharacterProfiles() {
   // Never leave the page scroll-locked if we navigate away with the dialog open.
   useEffect(() => () => document.body.classList.remove('lock'), []);
 
-  const c = selected !== null ? CHARACTERS[selected] : null;
+  const c = selected !== null ? characters[selected] : null;
 
   return (
     <>
       <div className="chg rv" id="chg">
-        {CHARACTERS.map((ch, i) => (
+        {characters.map((ch, i) => (
           <button
             key={i}
             type="button"
@@ -107,7 +114,7 @@ export default function CharacterProfiles() {
           >
             <Portrait c={ch} id={String(i)} />
             <div className="tx">
-              <small>Profile {pad(i + 1)} · {ch.open ? 'Placeholder' : 'Locked'}</small>
+              <small>Profile {pad(i + 1)} · {ch.open ? (sample ? 'Placeholder' : 'Revealed') : 'Locked'}</small>
               <b>{ch.name}</b>
               <span className="rl">{ch.role}</span>
             </div>
@@ -125,7 +132,7 @@ export default function CharacterProfiles() {
           <>
             <div className="dg" style={cssVar(c.color)}>
               <Portrait c={c} id={`d${selected}`} />
-              <div className="in"><ProfileBody c={c} index={selected} /></div>
+              <div className="in"><ProfileBody c={c} index={selected} sample={sample} /></div>
             </div>
             <button className="x" type="button" aria-label="Close profile" onClick={() => dialog.current?.close()}>CLOSE</button>
           </>

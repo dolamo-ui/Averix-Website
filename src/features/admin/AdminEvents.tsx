@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { EVENTS_COLLECTION, getFirebase } from '@/lib/firebase';
+import { cleanImageUrl } from '@/lib/imageUrl';
+import ImageField from './ImageField';
 
 const TYPES = ['Tournament', 'Community', 'Showcase'] as const;
 const REG = ['Open', 'Opens soon', 'Not open yet', 'Sold out', 'Closed'] as const;
@@ -23,11 +25,12 @@ interface Row {
   deadline: string;
   platform: string;
   ticketUrl: string;
+  image: string;
 }
 
 const blank = (): Row => ({
   id: '', name: '', type: 'Tournament', game: '', date: '', time: '19:00', hours: '3', entry: 'Free', prize: 'No prize',
-  slots: '', format: 'Online', reg: 'Open', deadline: '', platform: '', ticketUrl: '',
+  slots: '', format: 'Online', reg: 'Open', deadline: '', platform: '', ticketUrl: '', image: '',
 });
 const slugify = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
 
@@ -65,7 +68,7 @@ export default function AdminEvents({ setMsg }: Props) {
         return {
           id: d.id, start, date, time, name: s('name'), type: s('type') || 'Tournament', game: s('game'), hours: s('hours') || '3',
           entry: s('entry'), prize: s('prize'), slots: s('slots'), format: s('format'), reg: s('reg'), deadline: s('deadline'),
-          platform: s('platform'), ticketUrl: s('ticketUrl'),
+          platform: s('platform'), ticketUrl: s('ticketUrl'), image: s('image'),
         };
       });
       list.sort((a, b) => b.start - a.start);
@@ -89,6 +92,8 @@ export default function AdminEvents({ setMsg }: Props) {
     if (isNew && rows.some((r) => r.id === id)) return setMsg('An event with this link name already exists. Change the link name.');
     const url = form.ticketUrl.trim();
     if (url && !/^https:\/\//i.test(url)) return setMsg('The ticket link must start with https:// (copy it from the Computicket event page).');
+    const image = form.image.trim();
+    if (image && !cleanImageUrl(image)) return setMsg('The image link must start with https:// (or leave it empty).');
     const hours = Number(form.hours);
     if (!Number.isFinite(hours) || hours <= 0) return setMsg('Duration must be a number of hours, like 3.');
     setBusy(true);
@@ -109,6 +114,7 @@ export default function AdminEvents({ setMsg }: Props) {
         deadline: form.deadline.trim(),
         platform: form.platform.trim(),
         ticketUrl: url,
+        image: cleanImageUrl(image),
       });
       setForm(null);
       setMsg('Saved. It will show on the Events page within about a minute.');
@@ -221,6 +227,7 @@ export default function AdminEvents({ setMsg }: Props) {
           Ticket link <small>(Computicket page for this event. Leave empty if there is no ticket page yet.)</small>
           <input type="url" value={form.ticketUrl} placeholder="https://www.computicket.com/..." onChange={(e) => set('ticketUrl', e.target.value)} />
         </label>
+        <ImageField value={form.image} onChange={(v) => set('image', v)} />
         <div className="bt">
           <button className="btn p" type="submit" disabled={busy}>
             {busy ? 'Saving…' : 'Publish'}

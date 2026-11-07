@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import SafeImg from '@/components/ui/SafeImg';
 import { NEWS_CATEGORIES, type NewsPost } from './posts';
 
 type Category = (typeof NEWS_CATEGORIES)[number];
@@ -48,6 +49,7 @@ export default function NewsFeed({ posts }: { posts: NewsPost[] }) {
             id={post.id}
             hidden={filter !== 'All' && post.category !== filter}
           >
+            {post.image && <SafeImg className="pimg" src={post.image} loading="lazy" />}
             <div className="meta">
               <span className="pill">{post.category}</span>
               <time dateTime={post.dateTime}>{post.dateLabel}</time>

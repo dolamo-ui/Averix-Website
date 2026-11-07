@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import SafeImg from '@/components/ui/SafeImg';
 import EventDrawer, { artStyle } from './EventDrawer';
 import { fmt, statusLabel, statusOf, when, type EventStatus, type SampleEvent } from './sampleEvents';
 import { useEvents } from './useEvents';
@@ -108,6 +109,7 @@ export default function EventExplorer() {
               onClick={() => open(e.id)}
             >
               <div className="ea" style={artStyle(e)}>
+                {e.image && <SafeImg className="eimg" src={e.image} loading="lazy" />}
                 <span className="tg">{e.type.toUpperCase()}{e.sample ? ' · SAMPLE' : ''}</span>
                 <span className={`stt ${st}`}>{statusLabel(e, now)}</span>
                 <div className="dt">

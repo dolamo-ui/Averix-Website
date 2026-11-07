@@ -31,10 +31,10 @@ export interface Game {
   /** Screenshot paths in /public. Empty shows placeholder frames. */
   screenshots: string[];
   /** Real store / download / play links. Null shows a "not open yet" message when clicked. */
-  links: { wishlist: string | null; download: string | null; play: string | null };
+  links: { waitlist: string | null; download: string | null; play: string | null };
   /** Text shown (as a small toast) when a link above is still null. */
-  linkMessages: { wishlist: string; download: string; play: string };
-  primaryAction: 'wishlist' | 'download' | 'play';
+  linkMessages: { waitlist: string; download: string; play: string };
+  primaryAction: 'waitlist' | 'download' | 'play';
 }
 
 export const GAMES: Game[] = [
@@ -59,13 +59,13 @@ export const GAMES: Game[] = [
     keyArt: null,
     trailer: null,
     screenshots: [],
-    links: { wishlist: null, download: null, play: null },
+    links: { waitlist: null, download: null, play: null },
     linkMessages: {
-      wishlist: 'Wishlist opens when Project Alpha has a store page.',
+      waitlist: 'The waiting list opens soon. Join the Discord to hear first.',
       download: 'Downloads are not available yet.',
       play: 'Project Alpha is not playable yet.',
     },
-    primaryAction: 'wishlist',
+    primaryAction: 'waitlist',
   },
   {
     slug: 'beta',
@@ -88,9 +88,9 @@ export const GAMES: Game[] = [
     keyArt: null,
     trailer: null,
     screenshots: [],
-    links: { wishlist: null, download: null, play: null },
+    links: { waitlist: null, download: null, play: null },
     linkMessages: {
-      wishlist: 'Wishlist opens when Project Beta has a store page.',
+      waitlist: 'The waiting list opens soon. Join the Discord to hear first.',
       download: 'Downloads are not available yet.',
       play: 'Alpha test sign-up is not open yet.',
     },
@@ -117,23 +117,14 @@ export const GAMES: Game[] = [
     keyArt: null,
     trailer: null,
     screenshots: [],
-    links: { wishlist: null, download: null, play: null },
+    links: { waitlist: null, download: null, play: null },
     linkMessages: {
-      wishlist: 'Wishlist opens when Project Gamma has a store page.',
+      waitlist: 'The waiting list opens soon. Join the Discord to hear first.',
       download: 'Downloads are not available yet.',
       play: 'Pre-registration is not open yet.',
     },
-    primaryAction: 'wishlist',
+    primaryAction: 'waitlist',
   },
 ];
 
 export const getGame = (slug: string) => GAMES.find((g) => g.slug === slug);
-
-/** The people behind the studio, shown as initials on game pages. Mirrors the About page. */
-export const STUDIO_TEAM = [
-  { initials: 'TN', name: 'Tshepiso Nkhodi', role: 'Managing Director' },
-  { initials: 'LM', name: 'Linnah Msiza', role: 'Business Development & Technical Coordination' },
-  { initials: 'BP', name: 'Bokamoso Pitso', role: 'Game Developer & Sound Engineer' },
-  { initials: 'FS', name: 'Francis Tinashe Sakala', role: 'Graphics Designer' },
-  { initials: 'SM', name: 'Shane Motsapole', role: 'Community & Audience Lead' },
-] as const;

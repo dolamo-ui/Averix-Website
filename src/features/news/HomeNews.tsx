@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SafeImg from '@/components/ui/SafeImg';
 import SnapRow from '@/components/mobile/SnapRow';
 import type { NewsPost } from './posts';
 
@@ -56,6 +57,7 @@ export default function HomeNews({ posts, fromCms, failed }: Props) {
     <SnapRow className="nw" label="Latest news">
       {latest.map((p) => (
         <article className="nc rv" key={p.id}>
+          {p.image && <SafeImg className="nimg" src={p.image} loading="lazy" />}
           <span className="pill">{p.category}</span>
           <time dateTime={p.dateTime}>{monthLabel(p.dateTime)}</time>
           <h3>{p.title}</h3>

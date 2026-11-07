@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import SafeImg from '@/components/ui/SafeImg';
 import { useToast } from '@/components/ui/Toast';
 import { fmt, statusLabel, statusOf, when, type SampleEvent } from './sampleEvents';
 
@@ -88,7 +89,9 @@ export default function EventDrawer({ event, now, onClose }: Props) {
       <div id="ov" onClick={onClose} />
       <aside ref={panel} id="dr" role="dialog" aria-modal="true" aria-labelledby="drt" aria-hidden={!open}>
         <div className="dh">
-          <div className="ea" id="dha" style={e ? artStyle(e) : undefined} />
+          <div className="ea" id="dha" style={e ? artStyle(e) : undefined}>
+            {e?.image && <SafeImg key={e.image} className="eimg" src={e.image} />}
+          </div>
           <button ref={closeBtn} className="x" id="dx" aria-label="Close event details" onClick={onClose}>✕</button>
           <div className="row">
             <span className="tg" id="dty">{e ? `${e.type.toUpperCase()}${e.sample ? ' · SAMPLE' : ''}` : ''}</span>

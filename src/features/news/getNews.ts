@@ -1,4 +1,5 @@
 import { firebaseConfig, firebaseEnabled, NEWS_COLLECTION } from '@/lib/firebase';
+import { cleanImageUrl } from '@/lib/imageUrl';
 import { NEWS_POSTS, type NewsPost } from './posts';
 
 type FsValue = { stringValue?: string };
@@ -35,6 +36,7 @@ export async function getNewsPosts(): Promise<{ posts: NewsPost[]; fromCms: bool
           dateLabel: date ? dateLabel(date) : '',
           title: get('title'),
           summary: get('summary'),
+          image: cleanImageUrl(get('image')) || undefined,
           body: get('body').split(/\n\s*\n/).map((t) => t.trim()).filter(Boolean),
         };
       })

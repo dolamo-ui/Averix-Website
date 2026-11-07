@@ -1,4 +1,5 @@
 import { firebaseConfig, firebaseEnabled, EVENTS_COLLECTION } from '@/lib/firebase';
+import { cleanImageUrl } from '@/lib/imageUrl';
 import type { SampleEvent } from './sampleEvents';
 
 type FsValue = { stringValue?: string; integerValue?: string; doubleValue?: number };
@@ -50,6 +51,7 @@ export async function getEvents(): Promise<{ cms: SampleEvent[] | null; failed: 
         deadline: str('deadline'),
         platform: str('platform'),
         art: artFor(id),
+        image: cleanImageUrl(str('image')) || undefined,
         ticketUrl: /^https:\/\//.test(str('ticketUrl')) ? str('ticketUrl') : undefined,
       });
     }

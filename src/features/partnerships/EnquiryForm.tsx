@@ -2,7 +2,8 @@
 
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useToast } from '@/components/ui/Toast';
-import { CONTACT_EMAIL, ENQUIRY_WEBHOOK_URL } from '@/lib/site'; // set the studio email in src/lib/site.ts
+import { ENQUIRY_WEBHOOK_URL } from '@/lib/site';
+import { useSite } from '@/components/layout/SiteProvider';
 import { ENQUIRIES_COLLECTION, firebaseEnabled, getFirebase } from '@/lib/firebase';
 
 
@@ -16,6 +17,7 @@ const PATHS = [
 ];
 
 export default function EnquiryForm() {
+  const { contactEmail: CONTACT_EMAIL } = useSite();
   const toast = useToast();
   const form = useRef<HTMLFormElement>(null);
   const [type, setType] = useState('');

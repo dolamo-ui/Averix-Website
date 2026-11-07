@@ -7,6 +7,8 @@ export interface NewsPost {
   title: string;
   summary: string;
   body: string[];
+  /** Optional picture (https link) set in the admin. */
+  image?: string;
 }
 
 /** Sample posts. Replace with real announcements as they happen. */

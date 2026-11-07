@@ -6,6 +6,14 @@ import { firebaseEnabled, getFirebase, NEWS_COLLECTION } from '@/lib/firebase';
 import { NEWS_POSTS } from '@/features/news/posts';
 import AdminEvents from './AdminEvents';
 import AdminEnquiries from './AdminEnquiries';
+import AdminGames from './AdminGames';
+import AdminMusic from './AdminMusic';
+import AdminTeam from './AdminTeam';
+import AdminCharacters from './AdminCharacters';
+import AdminIp from './AdminIp';
+import AdminSettings from './AdminSettings';
+import ImageField from './ImageField';
+import { cleanImageUrl } from '@/lib/imageUrl';
 
 const CATEGORIES = ['Studio', 'Development', 'Community', 'Events'] as const;
 
@@ -16,10 +24,11 @@ interface Row {
   date: string;
   summary: string;
   body: string;
+  image: string;
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
-const blank = (): Row => ({ id: '', title: '', category: 'Studio', date: today(), summary: '', body: '' });
+const blank = (): Row => ({ id: '', title: '', category: 'Studio', date: today(), summary: '', body: '', image: '' });
 const slugify = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
 
 /** Private news manager: sign in, then add, edit or delete News posts. Needs the Firebase values from .env.local. */
@@ -32,14 +41,14 @@ export default function AdminNews() {
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState<'news' | 'events' | 'enquiries'>('news');
+  const [tab, setTab] = useState<'news' | 'events' | 'games' | 'music' | 'team' | 'ip' | 'characters' | 'settings' | 'enquiries'>('news');
   const [newEnq, setNewEnq] = useState(0);
 
   const load = useCallback(async () => {
     try {
       const { db, firestore } = await getFirebase();
       const snap = await firestore.getDocs(firestore.query(firestore.collection(db, NEWS_COLLECTION), firestore.orderBy('date', 'desc')));
-      setRows(snap.docs.map((d) => ({ ...(d.data() as Omit<Row, 'id'>), id: d.id })));
+      setRows(snap.docs.map((d) => ({ ...(d.data() as Omit<Row, 'id' | 'image'> & { image?: string }), image: String(d.data().image ?? ''), id: d.id })));
     } catch {
       setMsg('Could not load posts. Check your Firestore rules and that you are allowed to edit.');
     }
@@ -90,12 +99,14 @@ export default function AdminNews() {
     const id = form.id.trim();
     if (!/^[a-z0-9-]+$/.test(id)) return setMsg('The link name can only use lowercase letters, numbers and dashes.');
     if (isNew && rows.some((r) => r.id === id)) return setMsg('A post with this link name already exists. Change the link name.');
+    const image = form.image.trim();
+    if (image && !cleanImageUrl(image)) return setMsg('The image link must start with https:// (or leave it empty).');
     setBusy(true);
     setMsg('');
     try {
       const { db, firestore } = await getFirebase();
       const { id: _omit, ...data } = form;
-      await firestore.setDoc(firestore.doc(db, NEWS_COLLECTION, id), data);
+      await firestore.setDoc(firestore.doc(db, NEWS_COLLECTION, id), { ...data, image: cleanImageUrl(image) });
       setForm(null);
       setMsg('Saved. It will show on the News page within about a minute.');
       await load();
@@ -187,11 +198,29 @@ export default function AdminNews() {
           <div className="tabs" role="tablist">
             <button type="button" role="tab" aria-selected={tab === 'news'} onClick={() => { setTab('news'); setMsg(''); }}>News</button>
             <button type="button" role="tab" aria-selected={tab === 'events'} onClick={() => { setTab('events'); setForm(null); setMsg(''); }}>Events</button>
+            <button type="button" role="tab" aria-selected={tab === 'games'} onClick={() => { setTab('games'); setForm(null); setMsg(''); }}>Games</button>
+            <button type="button" role="tab" aria-selected={tab === 'music'} onClick={() => { setTab('music'); setForm(null); setMsg(''); }}>Music</button>
+            <button type="button" role="tab" aria-selected={tab === 'team'} onClick={() => { setTab('team'); setForm(null); setMsg(''); }}>Team</button>
+            <button type="button" role="tab" aria-selected={tab === 'ip'} onClick={() => { setTab('ip'); setForm(null); setMsg(''); }}>IP</button>
+            <button type="button" role="tab" aria-selected={tab === 'characters'} onClick={() => { setTab('characters'); setForm(null); setMsg(''); }}>Characters</button>
+            <button type="button" role="tab" aria-selected={tab === 'settings'} onClick={() => { setTab('settings'); setForm(null); setMsg(''); }}>Settings</button>
             <button type="button" role="tab" aria-selected={tab === 'enquiries'} onClick={() => { setTab('enquiries'); setForm(null); setMsg(''); }}>Enquiries{newEnq > 0 ? ` (${newEnq})` : ''}</button>
           </div>
 
           {tab === 'events' ? (
             <AdminEvents setMsg={setMsg} />
+          ) : tab === 'games' ? (
+            <AdminGames setMsg={setMsg} />
+          ) : tab === 'music' ? (
+            <AdminMusic setMsg={setMsg} />
+          ) : tab === 'team' ? (
+            <AdminTeam setMsg={setMsg} />
+          ) : tab === 'ip' ? (
+            <AdminIp setMsg={setMsg} />
+          ) : tab === 'characters' ? (
+            <AdminCharacters setMsg={setMsg} />
+          ) : tab === 'settings' ? (
+            <AdminSettings setMsg={setMsg} />
           ) : tab === 'enquiries' ? (
             <AdminEnquiries setMsg={setMsg} onCount={setNewEnq} />
           ) : form ? (
@@ -227,6 +256,7 @@ export default function AdminNews() {
                   <input type="date" value={form.date} required onChange={(e) => set('date', e.target.value)} />
                 </label>
               </div>
+              <ImageField value={form.image} onChange={(v) => set('image', v)} />
               <label>
                 Short summary <small>(1–2 sentences, shown on the card)</small>
                 <textarea rows={3} maxLength={220} value={form.summary} required onChange={(e) => set('summary', e.target.value)} />

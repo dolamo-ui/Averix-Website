@@ -20,6 +20,8 @@ export interface SampleEvent {
   art: [string, string, string];
   /** Ticket page (for example on Computicket). When set, the event shows a "Buy ticket" button. */
   ticketUrl?: string;
+  /** Optional picture (https link) set in the admin. Shown on the card and in the details panel. */
+  image?: string;
   /** true for the built-in sample events, so they can be labelled as samples. */
   sample?: boolean;
 }
