@@ -6,6 +6,32 @@ import PageFrame from '@/components/layout/PageFrame';
 import SafeImg from '@/components/ui/SafeImg';
 import '@/styles/games.css';
 import TiltEffect from '@/components/ui/TiltEffect';
+import { getGamesWithAdmin } from '@/features/games/getGames';
+import { PIPELINE, type Game } from '@/features/games/gamesData';
+
+// Re-check the admin (status, texts, links) at most once a minute.
+export const revalidate = 60;
+
+const tbd = (label: string, v: string) => (/to be announced|^tbd$/i.test(v.trim()) ? `${label} TBD` : v);
+
+/** A real link when the client set one in /admin > Games, otherwise the "coming soon" toast button. */
+function Act({ url, msg, label, cls }: { url: string | null; msg: string; label: string; cls: string }) {
+  return url ? (
+    <a className={`btn ${cls}`} href={url} target="_blank" rel="noopener noreferrer">{label}</a>
+  ) : (
+    <button className={`btn ${cls}`} data-msg={msg}>{label}</button>
+  );
+}
+
+function Meter({ g }: { g: Game }) {
+  return (
+    <div className="mt" aria-label={`Stage ${g.stage} of ${PIPELINE.length}: ${g.status}`}>
+      {PIPELINE.map((step, i) => (
+        <span key={step} className={i < g.stage ? 'on' : undefined} />
+      ))}
+    </div>
+  );
+}
 
 export const metadata: Metadata = pageMeta({
   title: 'Games | Averix Games',
@@ -13,7 +39,12 @@ export const metadata: Metadata = pageMeta({
   path: '/games',
 });
 
-export default function GamesPage() {
+export default async function GamesPage() {
+  const all = await getGamesWithAdmin();
+  const pick = (slug: Game['slug']) => all.find((g) => g.slug === slug) as Game;
+  const alpha = pick('alpha');
+  const beta = pick('beta');
+  const gamma = pick('gamma');
   return (
     <PageFrame page="games" toastMs={2400}>
       <TiltEffect selector=".pj2 .art" />
@@ -35,18 +66,18 @@ export default function GamesPage() {
         <div className="idx rv" role="navigation" aria-label="Projects">
           <a href="#alpha">
             <em>01</em>
-            <b>Project Alpha</b>
-            <small>In Development</small>
+            <b>{alpha.name}</b>
+            <small>{alpha.status}</small>
           </a>
           <a href="#beta">
             <em>02</em>
-            <b>Project Beta</b>
-            <small>Prototype</small>
+            <b>{beta.name}</b>
+            <small>{beta.status}</small>
           </a>
           <a href="#gamma">
             <em>03</em>
-            <b>Project Gamma</b>
-            <small>Coming Soon</small>
+            <b>{gamma.name}</b>
+            <small>{gamma.status}</small>
           </a>
         </div>
       </section>
@@ -54,39 +85,24 @@ export default function GamesPage() {
         <span className="eyebrow rv">THE PIPELINE</span>
         <h2 className="rv">Where every project stands.</h2>
         <ol className="trk rv">
-          <li>
-            <i />
-            <b>Concept</b>
-          </li>
-          <li className="has">
-            <i />
-            <b>Prototype</b>
-            <u>Project Beta</u>
-          </li>
-          <li className="has">
-            <i />
-            <b>In Development</b>
-            <u>Project Alpha</u>
-          </li>
-          <li>
-            <i />
-            <b>Early Access</b>
-          </li>
-          <li className="has">
-            <i />
-            <b>Coming Soon</b>
-            <u>Project Gamma</u>
-          </li>
-          <li>
-            <i />
-            <b>Released</b>
-          </li>
+          {PIPELINE.map((step, i) => {
+            const here = all.filter((g) => g.stage === i + 1);
+            return (
+              <li key={step} className={here.length ? 'has' : undefined}>
+                <i />
+                <b>{step}</b>
+                {here.map((g) => (
+                  <u key={g.slug}>{g.name}</u>
+                ))}
+              </li>
+            );
+          })}
         </ol>
       </section>
       <section className="stk">
         <article className="pj2 k-a" id="alpha" style={{ "--i": "0" } as CSSProperties}>
           <div className="art">
-            <SafeImg className="ph" src="/assets/alpha.jpg" alt="Project Alpha key art" />
+            <SafeImg className="ph" src={alpha.keyArt || "/assets/alpha.jpg"} alt={`${alpha.name} key art`} />
             <div className="tilt">
               <div className="ring r1" />
               <div className="ring r2" />
@@ -98,41 +114,26 @@ export default function GamesPage() {
           </div>
           <div className="inf">
             <div className="no" aria-hidden="true">01</div>
-            <span className="chip live">In Development</span>
-            <p className="meta">
-              Genre TBD
-              {' '}
-              <i>•</i>
-              {' '}
-              Platform TBD
-            </p>
+            <span className="chip live">{alpha.status}</span>
+            <p className="meta">{tbd('Genre', alpha.genre)} <i>•</i> {tbd('Platform', alpha.platforms)}</p>
             <h2>
-              <Link href="/games/alpha">Project Alpha</Link>
+              <Link href="/games/alpha">{alpha.name}</Link>
             </h2>
-            <p className="ds">
-              Upcoming original title currently in active development. Official concept art, lore, and screenshots coming soon.
-            </p>
+            <p className="ds">{alpha.description}</p>
             <div className="bt">
-              <button className="btn p" data-msg="Wishlist opens when Project Alpha has a store page.">Wishlist</button>
+              <Act url={alpha.links.waitlist} msg={alpha.linkMessages.waitlist} label="Join Waiting List" cls="p" />
               <Link className="btn s" href="/games/alpha">Overview</Link>
             </div>
             <div className="st">
               <small>PIPELINE</small>
-              <div className="mt" aria-label="Stage 3 of 6: In Development">
-                <span className="on" />
-                <span className="on" />
-                <span className="on" />
-                <span />
-                <span />
-                <span />
-              </div>
-              <small className="sn">IN DEVELOPMENT</small>
+              <Meter g={alpha} />
+              <small className="sn">{alpha.status.toUpperCase()}</small>
             </div>
           </div>
         </article>
         <article className="pj2 k-b" id="beta" style={{ "--i": "1" } as CSSProperties}>
           <div className="art">
-            <SafeImg className="ph" src="/assets/beta.jpg" alt="Project Beta key art" />
+            <SafeImg className="ph" src={beta.keyArt || "/assets/beta.jpg"} alt={`${beta.name} key art`} />
             <div className="tilt">
               <div className="blk k1" />
               <div className="blk k2" />
@@ -145,39 +146,26 @@ export default function GamesPage() {
           </div>
           <div className="inf">
             <div className="no" aria-hidden="true">02</div>
-            <span className="chip">Prototype</span>
-            <p className="meta">
-              Genre TBD
-              {' '}
-              <i>•</i>
-              {' '}
-              Platform TBD
-            </p>
+            <span className="chip">{beta.status}</span>
+            <p className="meta">{tbd('Genre', beta.genre)} <i>•</i> {tbd('Platform', beta.platforms)}</p>
             <h2>
-              <Link href="/games/beta">Project Beta</Link>
+              <Link href="/games/beta">{beta.name}</Link>
             </h2>
-            <p className="ds">Early experimental prototype exploring new mechanics and interactive gameplay loops. Details to be announced.</p>
+            <p className="ds">{beta.description}</p>
             <div className="bt">
               <Link className="btn p" href="/games/beta">View Concept</Link>
-              <button className="btn s" data-msg="Alpha test sign-up is not open yet.">Join Alpha</button>
+              <Act url={beta.links.play} msg={beta.linkMessages.play} label="Join Alpha" cls="s" />
             </div>
             <div className="st">
               <small>PIPELINE</small>
-              <div className="mt" aria-label="Stage 2 of 6: Prototype">
-                <span className="on" />
-                <span className="on" />
-                <span />
-                <span />
-                <span />
-                <span />
-              </div>
-              <small className="sn">PROTOTYPE</small>
+              <Meter g={beta} />
+              <small className="sn">{beta.status.toUpperCase()}</small>
             </div>
           </div>
         </article>
         <article className="pj2 k-g" id="gamma" style={{ "--i": "2" } as CSSProperties}>
           <div className="art">
-            <SafeImg className="ph" src="/assets/gamma.jpg" alt="Project Gamma key art" />
+            <SafeImg className="ph" src={gamma.keyArt || "/assets/gamma.jpg"} alt={`${gamma.name} key art`} />
             <div className="tilt">
               <div className="radar" />
               <div className="pulse p1" />
@@ -189,35 +177,20 @@ export default function GamesPage() {
           </div>
           <div className="inf">
             <div className="no" aria-hidden="true">03</div>
-            <span className="chip">Coming Soon</span>
-            <p className="meta">
-              Genre TBD
-              {' '}
-              <i>•</i>
-              {' '}
-              Platform TBD
-            </p>
+            <span className="chip">{gamma.status}</span>
+            <p className="meta">{tbd('Genre', gamma.genre)} <i>•</i> {tbd('Platform', gamma.platforms)}</p>
             <h2>
-              <Link href="/games/gamma">Project Gamma</Link>
+              <Link href="/games/gamma">{gamma.name}</Link>
             </h2>
-            <p className="ds">
-              Upcoming studio release. Further announcements regarding gameplay trailers and release dates will be published soon.
-            </p>
+            <p className="ds">{gamma.description}</p>
             <div className="bt">
-              <button className="btn p" data-msg="Pre-registration is not open yet.">Pre-Register</button>
+              <Act url={gamma.links.waitlist} msg={gamma.linkMessages.waitlist} label="Pre-Register" cls="p" />
               <Link className="btn s" href="/games/gamma#trailer">Trailer</Link>
             </div>
             <div className="st">
               <small>PIPELINE</small>
-              <div className="mt" aria-label="Stage 5 of 6: Coming Soon">
-                <span className="on" />
-                <span className="on" />
-                <span className="on" />
-                <span className="on" />
-                <span className="on" />
-                <span />
-              </div>
-              <small className="sn">COMING SOON</small>
+              <Meter g={gamma} />
+              <small className="sn">{gamma.status.toUpperCase()}</small>
             </div>
           </div>
         </article>

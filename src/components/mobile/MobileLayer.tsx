@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { DISCORD_URL } from '@/lib/site';
+import { useSite } from '@/components/layout/SiteProvider';
 
 /** Averix phone layer: bottom tab bar, full-screen menu sheet, scroll progress, tap feedback, data-saver mode. */
 
@@ -20,13 +20,6 @@ const SHEET_LINKS = [
   { href: '/partnerships', label: 'Partnerships', note: 'Publishers, sponsors and brands' },
 ] as const;
 
-const SOCIALS = [
-  { label: 'Discord', href: DISCORD_URL },
-  { label: 'X', href: 'https://x.com/averixgames' },
-  { label: 'TikTok', href: 'https://www.tiktok.com/@avxgames' },
-  { label: 'Instagram', href: 'https://www.instagram.com/avxgame?stkn=am12azMyd24xaG90' },
-];
-
 const buzz = (ms = 8) => {
   try {
     navigator.vibrate?.(ms);
@@ -38,6 +31,7 @@ const buzz = (ms = 8) => {
 const isActive = (href: string, path: string) => (href === '/' ? path === '/' : path.startsWith(href));
 
 export default function MobileLayer() {
+  const { discordUrl: DISCORD_URL, socials: SOCIALS } = useSite();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const sheet = useRef<HTMLDivElement>(null);

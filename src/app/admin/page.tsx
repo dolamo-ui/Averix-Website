@@ -7,7 +7,7 @@ import '@/styles/admin.css';
 
 export const metadata: Metadata = pageMeta({
   title: 'Admin | Averix Games',
-  description: 'Private area for managing Averix Games news.',
+  description: 'Private area for managing Averix Games news, events, games, music, team, characters and site settings.',
   path: '/admin',
   noindex: true,
 });

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
 import PageFrame from '@/components/layout/PageFrame';
+import { getSiteSettings } from '@/lib/siteSettings';
 import '@/styles/partnerships.css';
 import EnquiryForm from '@/features/partnerships/EnquiryForm';
 
@@ -11,7 +12,8 @@ export const metadata: Metadata = pageMeta({
   path: '/partnerships',
 });
 
-export default function PartnershipsPage() {
+export default async function PartnershipsPage() {
+  const site = await getSiteSettings();
   return (
     <PageFrame page="partnerships" toastMs={3200}>
       <section className="ph" id="top">
@@ -191,17 +193,17 @@ export default function PartnershipsPage() {
               </li>
             </ol>
             <div className="alt-c">
-              <a href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">
+              <a href={site.discordUrl} target="_blank" rel="noopener noreferrer">
                 Message us on Discord
                 {' '}
                 <span>→</span>
               </a>
-              <a href="https://x.com/averixgames" target="_blank" rel="noopener noreferrer">
+              <a href={site.socials[1].href} target="_blank" rel="noopener noreferrer">
                 X / Twitter
                 {' '}
                 <span>→</span>
               </a>
-              <a href="https://www.instagram.com/avxgame?stkn=am12azMyd24xaG90" target="_blank" rel="noopener noreferrer">
+              <a href={site.socials[3].href} target="_blank" rel="noopener noreferrer">
                 Instagram
                 {' '}
                 <span>→</span>

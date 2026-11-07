@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
 import PageFrame from '@/components/layout/PageFrame';
+import { getSiteSettings } from '@/lib/siteSettings';
 import { DATA_URIS } from '@/features/community/dataUris';
 import '@/styles/community.css';
 import NextEventLink from '@/features/community/NextEventLink';
@@ -21,6 +22,7 @@ export const metadata: Metadata = pageMeta({
 });
 
 export default async function CommunityPage() {
+  const site = await getSiteSettings();
   const { cms, failed } = await getEvents();
   const { events, sample } = communityEvents(cms);
   return (
@@ -39,23 +41,23 @@ export default async function CommunityPage() {
             Players, creators and the Averix team in one place. Find teammates, enter tournaments and help shape what we build next.
           </p>
           <div className="cta rv">
-            <a className="btn p" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">Join the Discord</a>
+            <a className="btn p" href={site.discordUrl} target="_blank" rel="noopener noreferrer">Join the Discord</a>
             <a className="btn s" href="#path">How to start</a>
           </div>
         </div>
         <div className="dock rv">
           <NextEventLink events={events} />
           <div className="soc" aria-label="Averix social links">
-            <a className="ic" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+            <a className="ic" href={site.discordUrl} target="_blank" rel="noopener noreferrer" aria-label="Discord">
               <i style={{ "--m": DATA_URIS[0] } as CSSProperties} />
             </a>
-            <a className="ic" href="https://x.com/averixgames" target="_blank" rel="noopener noreferrer" aria-label="X">
+            <a className="ic" href={site.socials[1].href} target="_blank" rel="noopener noreferrer" aria-label="X">
               <i style={{ "--m": DATA_URIS[1] } as CSSProperties} />
             </a>
-            <a className="ic" href="https://www.tiktok.com/@avxgames" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <a className="ic" href={site.socials[2].href} target="_blank" rel="noopener noreferrer" aria-label="TikTok">
               <i style={{ "--m": DATA_URIS[2] } as CSSProperties} />
             </a>
-            <a className="ic" href="https://www.instagram.com/avxgame?stkn=am12azMyd24xaG90" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a className="ic" href={site.socials[3].href} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <i style={{ "--m": DATA_URIS[3] } as CSSProperties} />
             </a>
           </div>
@@ -67,7 +69,7 @@ export default async function CommunityPage() {
           <h2>Pick your channel.</h2>
         </div>
         <div className="bento">
-          <a className="bx dc rv" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">
+          <a className="bx dc rv" href={site.discordUrl} target="_blank" rel="noopener noreferrer">
             <span className="ic">
               <i style={{ "--m": DATA_URIS[4] } as CSSProperties} />
             </span>
@@ -96,7 +98,7 @@ export default async function CommunityPage() {
             </ul>
             <span className="go">ENTER THE SERVER →</span>
           </a>
-          <a className="bx rv" href="https://x.com/averixgames" target="_blank" rel="noopener noreferrer">
+          <a className="bx rv" href={site.socials[1].href} target="_blank" rel="noopener noreferrer">
             <span className="ic">
               <i style={{ "--m": DATA_URIS[5] } as CSSProperties} />
             </span>
@@ -107,7 +109,7 @@ export default async function CommunityPage() {
             </div>
             <span className="go">FOLLOW →</span>
           </a>
-          <a className="bx rv" href="https://www.tiktok.com/@avxgames" target="_blank" rel="noopener noreferrer">
+          <a className="bx rv" href={site.socials[2].href} target="_blank" rel="noopener noreferrer">
             <span className="ic">
               <i style={{ "--m": DATA_URIS[6] } as CSSProperties} />
             </span>
@@ -118,7 +120,7 @@ export default async function CommunityPage() {
             </div>
             <span className="go">WATCH →</span>
           </a>
-          <a className="bx rv" href="https://www.instagram.com/avxgame?stkn=am12azMyd24xaG90" target="_blank" rel="noopener noreferrer">
+          <a className="bx rv" href={site.socials[3].href} target="_blank" rel="noopener noreferrer">
             <span className="ic">
               <i style={{ "--m": DATA_URIS[7] } as CSSProperties} />
             </span>
@@ -228,7 +230,7 @@ export default async function CommunityPage() {
           <h2>Your slot is open.</h2>
           <p>Join the Averix community before the first world drops.</p>
           <div className="cta">
-            <a className="btn p" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">Join the Discord</a>
+            <a className="btn p" href={site.discordUrl} target="_blank" rel="noopener noreferrer">Join the Discord</a>
             <Link className="btn s" href="/events">See events</Link>
           </div>
         </div>

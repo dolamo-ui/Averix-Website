@@ -3,8 +3,15 @@ import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
 import PageFrame from '@/components/layout/PageFrame';
+import { getSiteSettings } from '@/lib/siteSettings';
 import '@/styles/about.css';
 import AboutEffects from '@/features/about/AboutEffects';
+import SafeImg from '@/components/ui/SafeImg';
+import { getTeam } from '@/features/about/getTeam';
+import { initialsOf } from '@/features/about/teamData';
+
+// Re-check the admin (team, links) at most once a minute.
+export const revalidate = 60;
 
 export const metadata: Metadata = pageMeta({
   title: 'About | Averix Games',
@@ -12,7 +19,9 @@ export const metadata: Metadata = pageMeta({
   path: '/about',
 });
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const site = await getSiteSettings();
+  const team = await getTeam();
   return (
     <PageFrame page="about">
       <AboutEffects />
@@ -293,102 +302,33 @@ export default function AboutPage() {
           <p>The people responsible for building Averix. Pick a player.</p>
         </div>
         <div className="rost">
-          <article className="slot rv">
-            <div className="sbar">
-              <span>
-                Slot
-                {' '}
-                <b>01</b>
-              </span>
-              <span>Leadership</span>
-            </div>
-            <div className="av">
-              <i aria-hidden="true">TN</i>
-            </div>
-            <div className="sin">
-              <h3>Tshepiso Nkhodi</h3>
-              <span className="rl">Managing Director</span>
-              <p>Studio direction, strategy and the long-term vision for Averix.</p>
-            </div>
-          </article>
-          <article className="slot rv">
-            <div className="sbar">
-              <span>
-                Slot
-                {' '}
-                <b>02</b>
-              </span>
-              <span>Business &amp; Tech</span>
-            </div>
-            <div className="av">
-              <i aria-hidden="true">LM</i>
-            </div>
-            <div className="sin">
-              <h3>Linnah Msiza</h3>
-              <span className="rl">Business Development Executive &amp; Technical Team Coordinator</span>
-              <p>Partnerships, growth opportunities and keeping the technical team in sync.</p>
-            </div>
-          </article>
-          <article className="slot rv">
-            <div className="sbar">
-              <span>
-                Slot
-                {' '}
-                <b>03</b>
-              </span>
-              <span>Development</span>
-            </div>
-            <div className="av">
-              <i aria-hidden="true">BP</i>
-            </div>
-            <div className="sin">
-              <h3>Bokamoso Pitso</h3>
-              <span className="rl">Game Developer &amp; Sound Engineer</span>
-              <p>Building the games and shaping how they sound.</p>
-            </div>
-          </article>
-          <article className="slot rv">
-            <div className="sbar">
-              <span>
-                Slot
-                {' '}
-                <b>04</b>
-              </span>
-              <span>Art &amp; Design</span>
-            </div>
-            <div className="av">
-              <i aria-hidden="true">FS</i>
-            </div>
-            <div className="sin">
-              <h3>Francis Tinashe Sakala</h3>
-              <span className="rl">Graphics Designer</span>
-              <p>Visual identity, artwork and the look of the Averix universe.</p>
-            </div>
-          </article>
-          <article className="slot rv">
-            <div className="sbar">
-              <span>
-                Slot
-                {' '}
-                <b>05</b>
-              </span>
-              <span>Community</span>
-            </div>
-            <div className="av">
-              <i aria-hidden="true">SM</i>
-            </div>
-            <div className="sin">
-              <h3>Shane Motsapole</h3>
-              <span className="rl">Community &amp; Audience Lead</span>
-              <p>Growing the community and keeping players connected to the studio.</p>
-            </div>
-          </article>
+          {team.map((m, i) => (
+            <article className="slot rv" key={m.id}>
+              <div className="sbar">
+                <span>
+                  Slot
+                  {' '}
+                  <b>{String(i + 1).padStart(2, '0')}</b>
+                </span>
+                <span>{m.dept}</span>
+              </div>
+              <div className="av">
+                {m.photo && <SafeImg className="tp" src={m.photo} alt={m.name} loading="lazy" />}
+                <i aria-hidden="true">{initialsOf(m.name)}</i>
+              </div>
+              <div className="sin">
+                <h3>{m.name}</h3>
+                <span className="rl">{m.role}</span>
+                <p>{m.blurb}</p>
+              </div>
+            </article>
+          ))}
           <article className="slot open rv">
             <div className="sbar">
               <span>
                 Slot
                 {' '}
-                <b>06</b>
+                <b>{String(team.length + 1).padStart(2, '0')}</b>
               </span>
               <span>Open</span>
             </div>
@@ -398,7 +338,7 @@ export default function AboutPage() {
             <div className="sin">
               <h3>Player two?</h3>
               <p>As Averix grows, so does the roster. No current vacancies? Join our talent network.</p>
-              <a className="btn s" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">Join the talent network</a>
+              <a className="btn s" href={site.discordUrl} target="_blank" rel="noopener noreferrer">Join the talent network</a>
             </div>
           </article>
         </div>

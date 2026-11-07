@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
@@ -6,7 +7,45 @@ import SafeImg from '@/components/ui/SafeImg';
 import '@/styles/music.css';
 import Waveform from '@/features/music/Waveform';
 import PlayButton from '@/features/music/PlayButton';
-import { RELEASES, TRACKS } from '@/features/music/musicData';
+import { getMusic } from '@/features/music/getMusic';
+
+// Re-check the admin for changes at most once a minute.
+export const revalidate = 60;
+
+const ICON_SPOTIFY = (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M7 10c3.5-1 7-.7 10 1M7.8 13c3-.8 5.8-.5 8.2 1M8.6 16c2.4-.6 4.4-.4 6.4.7" />
+  </svg>
+);
+const ICON_YOUTUBE = (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="3" y="6" width="18" height="12" rx="4" />
+    <path d="m10.5 9.5 4 2.5-4 2.5z" />
+  </svg>
+);
+const ICON_APPLE = (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M9 18V5l11-2v13" />
+    <circle cx="6" cy="18" r="3" />
+    <circle cx="17" cy="16" r="3" />
+  </svg>
+);
+
+/** A streaming link when the client has added one, otherwise the "coming at release" toast button. */
+function Stream({ href, label, icon }: { href: string; label: string; icon: ReactNode }) {
+  return href ? (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {icon}
+      {label}
+    </a>
+  ) : (
+    <button type="button" data-msg={`${label} link coming at release.`}>
+      {icon}
+      {label}
+    </button>
+  );
+}
 
 export const metadata: Metadata = pageMeta({
   title: 'Music | Averix Games',
@@ -14,7 +53,8 @@ export const metadata: Metadata = pageMeta({
   path: '/music',
 });
 
-export default function MusicPage() {
+export default async function MusicPage() {
+  const { album, releases } = await getMusic();
   return (
     <PageFrame page="music">
       {/* Caveat is only used on this page, so it is loaded here (React 19 hoists it into <head>). */}
@@ -48,64 +88,65 @@ export default function MusicPage() {
       <section className="al" id="album">
         <div className="al-g">
           <div className="cov rv">
-            <SafeImg src="/assets/music-album.jpg" alt="The Awakening, original game soundtrack cover art" />
+            <SafeImg src={album.cover} alt={`${album.title}, cover art`} />
           </div>
           <div className="al-i rv">
-            <span className="chip">Game 01</span>
-            <h2>The Awakening</h2>
-            <p className="sb">Official Game Soundtrack</p>
-            <p className="ds">
-              The first chapter of our journey. Each level unlocks a new sound, and together they form the story of The Awakening.
-            </p>
+            <span className="chip">{album.chip}</span>
+            <h2>{album.title}</h2>
+            <p className="sb">{album.subtitle}</p>
+            <p className="ds">{album.description}</p>
             <p className="cr">
-              Produced by Averix Studio<br />In collaboration with The Harmony Collective
+              {album.credits.split('\n').map((line, i) => (
+                <span key={i}>
+                  {i > 0 && <br />}
+                  {line}
+                </span>
+              ))}
             </p>
             <div className="bt">
-              <button className="btn p" type="button" data-msg="Streaming opens when The Awakening soundtrack is released.">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M7 4v16l13-8z" />
-                </svg>
-                Listen Now
-              </button>
+              {(() => {
+                const play = (
+                  <>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M7 4v16l13-8z" />
+                    </svg>
+                    Listen Now
+                  </>
+                );
+                return album.listenUrl ? (
+                  <a className="btn p" href={album.listenUrl} target="_blank" rel="noopener noreferrer">
+                    {play}
+                  </a>
+                ) : (
+                  <button className="btn p" type="button" data-msg={`Streaming opens when ${album.title} is released.`}>
+                    {play}
+                  </button>
+                );
+              })()}
               <button className="btn s" type="button" data-msg="The full album page is coming soon.">View Album</button>
             </div>
           </div>
           <div className="tl rv">
             <h3>Album Tracklist</h3>
-            <ol>
-              {TRACKS.map((t) => (
-                <li key={t.n}>
-                  <span className="tn">{t.n}</span>
-                  <span className="tt">{t.title}</span>
-                  <time>{t.time}</time>
-                  <PlayButton label={t.title} />
-                </li>
-              ))}
-            </ol>
+            {album.tracks.length ? (
+              <ol>
+                {album.tracks.map((t) => (
+                  <li key={t.n}>
+                    <span className="tn">{t.n}</span>
+                    <span className="tt">{t.title}</span>
+                    <time>{t.time}</time>
+                    <PlayButton label={t.title} href={t.url} />
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="ds">The tracklist will be announced soon.</p>
+            )}
             <div className="av">
               <span className="lb">Available on</span>
-              <button type="button" data-msg="Spotify link coming at release.">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M7 10c3.5-1 7-.7 10 1M7.8 13c3-.8 5.8-.5 8.2 1M8.6 16c2.4-.6 4.4-.4 6.4.7" />
-                </svg>
-                Spotify
-              </button>
-              <button type="button" data-msg="YouTube link coming at release.">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3" y="6" width="18" height="12" rx="4" />
-                  <path d="m10.5 9.5 4 2.5-4 2.5z" />
-                </svg>
-                YouTube
-              </button>
-              <button type="button" data-msg="Apple Music link coming at release.">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M9 18V5l11-2v13" />
-                  <circle cx="6" cy="18" r="3" />
-                  <circle cx="17" cy="16" r="3" />
-                </svg>
-                Apple Music
-              </button>
+              <Stream href={album.spotifyUrl} label="Spotify" icon={ICON_SPOTIFY} />
+              <Stream href={album.youtubeUrl} label="YouTube" icon={ICON_YOUTUBE} />
+              <Stream href={album.appleUrl} label="Apple Music" icon={ICON_APPLE} />
             </div>
           </div>
         </div>
@@ -180,11 +221,12 @@ export default function MusicPage() {
           </div>
           <button className="vl" type="button" data-msg="The full release catalogue is coming soon.">View all releases &rarr;</button>
         </div>
+        {releases.length === 0 && <p className="lead rv">New releases are on the way. Check back soon.</p>}
         <div className="rl-g">
-          {RELEASES.map((r) => (
-            <article className="rel rv" key={r.title}>
+          {releases.map((r) => (
+            <article className="rel rv" key={r.id}>
               <div className="rel-i">
-                <SafeImg src={r.cover} alt={`${r.title} cover art`} loading="lazy" />
+                {r.cover && <SafeImg src={r.cover} alt={`${r.title} cover art`} loading="lazy" />}
               </div>
               <div>
                 <span className="chip">{r.type}</span>
@@ -192,7 +234,7 @@ export default function MusicPage() {
                 <small>{r.artist}</small>
                 <div className="rf">
                   <time>{r.time}</time>
-                  <PlayButton label={r.title} />
+                  <PlayButton label={r.title} href={r.url} />
                 </div>
               </div>
             </article>

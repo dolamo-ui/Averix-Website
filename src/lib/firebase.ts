@@ -44,6 +44,10 @@ export const SETTINGS_COLLECTION = 'settings';
 export const TEAM_COLLECTION = 'team';
 /** IP characters shown on the IP page. */
 export const CHARACTERS_COLLECTION = 'characters';
+/** IP page: two documents, `universe` (the featured universe) and `links` (the IP blurb for each game in IP × Games). */
+export const IP_COLLECTION = 'ip';
+/** IP page: one document per tile in the Concept Art Vault. */
+export const IP_VAULT_COLLECTION = 'ipVault';
 
 /** Loads Firebase only when needed (the admin page), so normal visitors never download it. */
 export async function getFirebase() {

@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import FooterCol from './FooterCol';
+import { useSite } from './SiteProvider';
 
 /** Shared footer. Links with href="#" are placeholders (PageFrame stops them jumping to the top). */
 export default function SiteFooter() {
+  const site = useSite();
   return (
     <footer>
       <p className="fw" aria-hidden="true">WE BUILD WORLDS.</p>
@@ -63,16 +65,16 @@ export default function SiteFooter() {
         <FooterCol title="COMMUNITY">
           <ul>
             <li>
-              <a href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">Discord</a>
+              <a href={site.discordUrl} target="_blank" rel="noopener noreferrer">Discord</a>
             </li>
             <li>
-              <a href="https://x.com/averixgames" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+              <a href={site.socials[1].href} target="_blank" rel="noopener noreferrer">X / Twitter</a>
             </li>
             <li>
-              <a href="https://www.tiktok.com/@avxgames" target="_blank" rel="noopener noreferrer">TikTok</a>
+              <a href={site.socials[2].href} target="_blank" rel="noopener noreferrer">TikTok</a>
             </li>
             <li>
-              <a href="https://www.instagram.com/avxgame?stkn=am12azMyd24xaG90" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href={site.socials[3].href} target="_blank" rel="noopener noreferrer">Instagram</a>
             </li>
           </ul></FooterCol>
         <FooterCol title="WORK WITH US" id="contact">

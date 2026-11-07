@@ -3,13 +3,21 @@ import { notFound } from 'next/navigation';
 import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import PageFrame from '@/components/layout/PageFrame';
+import SafeImg from '@/components/ui/SafeImg';
 import { pageMeta } from '@/lib/seo';
-import { SITE_URL, SOCIALS } from '@/lib/site';
-import { GAMES, PIPELINE, STUDIO_TEAM, getGame, type Game } from '@/features/games/gamesData';
+import { SITE_URL } from '@/lib/site';
+import { getSiteSettings } from '@/lib/siteSettings';
+import { GAMES, PIPELINE, getGame, type Game } from '@/features/games/gamesData';
+import { getGamesWithAdmin } from '@/features/games/getGames';
+import { getTeam } from '@/features/about/getTeam';
+import { initialsOf } from '@/features/about/teamData';
 import '@/styles/site.css';
 import '@/styles/game.css';
 
 export const dynamicParams = false;
+
+// Re-check the admin (trailer, screenshots, waiting list link) at most once a minute.
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return GAMES.map((g) => ({ slug: g.slug }));
@@ -27,8 +35,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 }
 
-function Action({ game, kind, variant }: { game: Game; kind: 'wishlist' | 'download' | 'play'; variant: 'p' | 's' }) {
-  const label = { wishlist: 'Wishlist', download: 'Download', play: game.slug === 'beta' ? 'Join Alpha' : game.slug === 'gamma' ? 'Pre-Register' : 'Play' }[kind];
+function Action({ game, kind, variant }: { game: Game; kind: 'waitlist' | 'download' | 'play'; variant: 'p' | 's' }) {
+  const label = { waitlist: 'Join Waiting List', download: 'Download', play: game.slug === 'beta' ? 'Join Alpha' : game.slug === 'gamma' ? 'Pre-Register' : 'Play' }[kind];
   const url = game.links[kind];
   if (url) {
     return (
@@ -71,10 +79,13 @@ function Trailer({ game }: { game: Game }) {
 
 export default async function GamePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const game = getGame(slug);
+  const site = await getSiteSettings();
+  const team = await getTeam();
+  const all = await getGamesWithAdmin();
+  const game = all.find((g) => g.slug === slug);
   if (!game) notFound();
 
-  const others = GAMES.filter((g) => g.slug !== game.slug);
+  const others = all.filter((g) => g.slug !== game.slug);
   const heroStyle: CSSProperties | undefined = game.keyArt
     ? { backgroundImage: `linear-gradient(90deg,rgba(5,6,10,.94) 0%,rgba(5,6,10,.55) 55%,rgba(5,6,10,.25) 100%),url(${game.keyArt})` }
     : undefined;
@@ -169,7 +180,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
             {game.screenshots.length > 0
               ? game.screenshots.map((src, i) => (
                   <figure key={src} className="shot rv">
-                    <img src={src} alt={`${game.name} screenshot ${i + 1}`} loading="lazy" />
+                    <SafeImg src={src} alt={`${game.name} screenshot ${i + 1}`} loading="lazy" />
                   </figure>
                 ))
               : [1, 2, 3].map((n) => (
@@ -206,9 +217,9 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
           <span className="eyebrow rv">THE TEAM</span>
           <h2 className="rv">The studio behind it</h2>
           <ul className="team">
-            {STUDIO_TEAM.map((m) => (
-              <li key={m.initials} className="rv">
-                <i aria-hidden="true">{m.initials}</i>
+            {team.map((m) => (
+              <li key={m.id} className="rv">
+                <i aria-hidden="true">{initialsOf(m.name)}</i>
                 <b>{m.name}</b>
                 <span>{m.role}</span>
               </li>
@@ -228,12 +239,12 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
             </div>
             <div className="acts">
               <div className="bt">
-                <Action game={game} kind="wishlist" variant="p" />
+                <Action game={game} kind="waitlist" variant="p" />
                 <Action game={game} kind="download" variant="s" />
                 {game.primaryAction === 'play' && <Action game={game} kind="play" variant="s" />}
               </div>
               <ul className="soc" aria-label="Averix Games social channels">
-                {SOCIALS.map((s) => (
+                {site.socials.map((s) => (
                   <li key={s.label}>
                     <a href={s.href} target="_blank" rel="noopener noreferrer">
                       {s.label}

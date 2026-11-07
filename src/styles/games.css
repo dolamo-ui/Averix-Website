@@ -87,7 +87,7 @@ body.lock{overflow:hidden}
 
 .pg-games .fin{position:relative;overflow:hidden;isolation:isolate;min-height:clamp(380px,38vw,500px);align-items:center;background:linear-gradient(100deg,rgba(123,52,255,.3),rgba(5,6,10,.9) 55%),var(--bg2)}
 .pg-games .fin>*{position:relative;z-index:2}
-.pg-games .fin:before{content:"";position:absolute;top:0;right:0;bottom:0;width:48%;z-index:0;background:url(/assets/first-world.jpg) 50% 30%/cover;-webkit-mask-image:linear-gradient(to right,transparent,#000 45%);mask-image:linear-gradient(to right,transparent,#000 45%);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.pg-games .fin:before{content:"";position:absolute;top:0;right:0;bottom:0;width:48%;z-index:0;background:url(https://i.imgur.com/qCs2xRQ.jpeg) 50% 30%/cover;-webkit-mask-image:linear-gradient(to right,transparent,#000 45%);mask-image:linear-gradient(to right,transparent,#000 45%);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
 .pg-games .fin:hover:before{transform:scale(1.04)}
 .pg-games .fin:after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(5,6,10,.55),transparent 55%),linear-gradient(transparent 60%,rgba(5,6,10,.6));pointer-events:none}
 .pg-games .fin .btn{align-self:flex-end;margin-bottom:6%}

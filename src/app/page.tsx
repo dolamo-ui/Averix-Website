@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
 import PageFrame from '@/components/layout/PageFrame';
+import { getSiteSettings } from '@/lib/siteSettings';
 import { DATA_URIS } from '@/features/home/dataUris';
 import '@/styles/home.css';
 import Hero from '@/features/home/Hero';
@@ -23,6 +24,7 @@ export const metadata: Metadata = pageMeta({
 });
 
 export default async function HomePage() {
+  const site = await getSiteSettings();
   const [{ cms, failed }, { posts: newsPosts, fromCms: newsFromCms, failed: newsFailed }] = await Promise.all([getEvents(), getNewsPosts()]);
   return (
     <PageFrame page="home" scrollPad={70} reveal={false} before={
@@ -215,21 +217,21 @@ export default async function HomePage() {
           <li>Dev updates</li>
           <li>Talk to the team</li>
         </ul>
-        <a className="btn p rv" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">Join the Discord</a>
+        <a className="btn p rv" href={site.discordUrl} target="_blank" rel="noopener noreferrer">Join the Discord</a>
         <div className="soc rv">
-          <a href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">
+          <a href={site.discordUrl} target="_blank" rel="noopener noreferrer">
             <i className="si" style={{ "--m": DATA_URIS[0] } as CSSProperties} />
             DISCORD
           </a>
-          <a href="https://x.com/averixgames" target="_blank" rel="noopener noreferrer">
+          <a href={site.socials[1].href} target="_blank" rel="noopener noreferrer">
             <i className="si" style={{ "--m": DATA_URIS[1] } as CSSProperties} />
             X / TWITTER
           </a>
-          <a href="https://www.tiktok.com/@avxgames" target="_blank" rel="noopener noreferrer">
+          <a href={site.socials[2].href} target="_blank" rel="noopener noreferrer">
             <i className="si" style={{ "--m": DATA_URIS[2] } as CSSProperties} />
             TIKTOK
           </a>
-          <a href="https://www.instagram.com/avxgame?stkn=am12azMyd24xaG90" target="_blank" rel="noopener noreferrer">
+          <a href={site.socials[3].href} target="_blank" rel="noopener noreferrer">
             <i className="si" style={{ "--m": DATA_URIS[3] } as CSSProperties} />
             INSTAGRAM
           </a>

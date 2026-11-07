@@ -109,3 +109,4 @@ body.lock{overflow:hidden}
 @media(max-width:640px){.pg-news .pg{grid-template-columns:1fr}}
 
 @media(prefers-reduced-motion:reduce){.pg-news .sl{display:none}.pg-news *,.pg-news *:before,.pg-news *:after{transition:none!important;animation:none!important}}
+.pg-news .pimg{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:1rem;border:1px solid var(--ln)}

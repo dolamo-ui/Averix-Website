@@ -7,6 +7,13 @@ import SafeImg from '@/components/ui/SafeImg';
 import '@/styles/ip.css';
 import TiltEffect from '@/components/ui/TiltEffect';
 import CharacterProfiles from '@/features/ip/CharacterProfiles';
+import { getCharacters } from '@/features/ip/getCharacters';
+import { getGameLinks, getUniverse, getVault } from '@/features/ip/getIpContent';
+import { getGamesWithAdmin } from '@/features/games/getGames';
+import VaultGrid from '@/features/ip/VaultGrid';
+
+// Re-check the admin for new characters at most once a minute.
+export const revalidate = 60;
 import { LicenseReveal } from '@/features/ip/IpEffects';
 
 export const metadata: Metadata = pageMeta({
@@ -15,7 +22,15 @@ export const metadata: Metadata = pageMeta({
   path: '/ip',
 });
 
-export default function IpPage() {
+export default async function IpPage() {
+  const [{ characters, sample }, universe, vault, links, games] = await Promise.all([
+    getCharacters(),
+    getUniverse(),
+    getVault(),
+    getGameLinks(),
+    getGamesWithAdmin(),
+  ]);
+  const origin = games.find((g) => g.slug === universe.game) ?? games[0];
   return (
     <PageFrame page="ip">
       <TiltEffect selector=".uv .art" />
@@ -109,7 +124,7 @@ export default function IpPage() {
             <em>02</em>
             <b>Worlds</b>
             <p>Original universes and settings built to be explored.</p>
-            <span className="stat">Universe 01 · Concept</span>
+            <span className="stat">Universe 01 · {universe.status}</span>
           </a>
           <a className="cx" href="#universe">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -140,7 +155,8 @@ export default function IpPage() {
           <h2 className="big">The first world.</h2>
         </div>
         <article className="uv rv">
-          <div className="art">
+          <div className={`art${universe.img ? ' has-img' : ''}`}>
+            {universe.img && <SafeImg src={universe.img} alt="" />}
             <div className="tilt">
               <div className="ring r1" />
               <div className="ring r2" />
@@ -148,37 +164,34 @@ export default function IpPage() {
               <div className="beam" />
               <div className="core" />
             </div>
-            <span className="tagx">UNIVERSE_01 · CONCEPT</span>
+            <span className="tagx">{universe.tag}</span>
           </div>
           <div className="inf">
-            <span className="chip live">Concept · Working title</span>
-            <span className="tl">Universe 01 · [Universe Name]</span>
-            <h2>A world still being drawn.</h2>
-            <p className="ds">
-              The first Averix universe is the foundation for Project Alpha and the characters, stories and music that will grow around it. Setting, tone and lore will be revealed step by step through the Averix news and community.
-            </p>
+            <span className="chip live">{universe.chip}</span>
+            <span className="tl">{universe.label}</span>
+            <h2>{universe.title}</h2>
+            <p className="ds">{universe.desc}</p>
             <dl className="fx">
               <div>
                 <dt>Origin game</dt>
-                <dd>Project Alpha</dd>
+                <dd>{origin.name}</dd>
               </div>
               <div>
                 <dt>Status</dt>
-                <dd>Concept</dd>
+                <dd>{universe.status}</dd>
               </div>
               <div>
                 <dt>Genre</dt>
-                <dd>To be announced</dd>
+                <dd>{universe.genre}</dd>
               </div>
               <div>
                 <dt>Platforms</dt>
-                <dd>To be announced</dd>
+                <dd>{universe.platforms}</dd>
               </div>
             </dl>
-            <p className="note">Placeholder copy: final universe name and lore to be supplied by Averix.</p>
+            {universe.note && <p className="note">{universe.note}</p>}
             <div className="bt">
-              <Link className="btn p" href="/games/alpha">See Project Alpha</Link>
-              <button className="btn s" type="button" data-msg="The lore archive opens when Averix reveals the first universe.">Read the lore</button>
+              <Link className="btn p" href={`/games/${origin.slug}`}>See {origin.name}</Link>
             </div>
           </div>
         </article>
@@ -191,7 +204,7 @@ export default function IpPage() {
             Each character gets a full profile: artwork, backstory, concept art and the game they belong to. Unrevealed profiles stay locked until Averix announces them.
           </p>
         </div>
-        <CharacterProfiles />
+        <CharacterProfiles characters={characters} sample={sample} />
       </section>
       <section className="sec" id="gallery">
         <div className="shd rv">
@@ -199,43 +212,7 @@ export default function IpPage() {
           <h2 className="big">Sketches before worlds.</h2>
           <p className="sub">Early artwork, key frames and music teasers will unlock here as Averix reveals them.</p>
         </div>
-        <div className="gal rv">
-          <button className="gt" type="button" data-msg="Concept art will be revealed with the first universe announcement." aria-label="Locked concept art 01">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="11" width="14" height="10" rx="2" />
-              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-            </svg>
-            <span className="tagx">CONCEPT_01 · LOCKED</span>
-          </button>
-          <button className="gt" type="button" data-msg="Character art unlocks when profiles are revealed." aria-label="Locked character art">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="11" width="14" height="10" rx="2" />
-              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-            </svg>
-            <span className="tagx">CHARACTER_02</span>
-          </button>
-          <button className="gt" type="button" data-msg="Environment art unlocks with the first world reveal." aria-label="Locked environment art">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="11" width="14" height="10" rx="2" />
-              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-            </svg>
-            <span className="tagx">WORLD_03</span>
-          </button>
-          <button className="gt" type="button" data-msg="Key frames will be shown closer to launch." aria-label="Locked key frame">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="11" width="14" height="10" rx="2" />
-              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-            </svg>
-            <span className="tagx">KEYFRAME_04</span>
-          </button>
-          <button className="gt" type="button" data-msg="Music teasers are planned for a later reveal." aria-label="Locked music teaser">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="11" width="14" height="10" rx="2" />
-              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-            </svg>
-            <span className="tagx">SOUND_05</span>
-          </button>
-        </div>
+        <VaultGrid items={vault} />
       </section>
       <section className="sec" id="in-games">
         <div className="shd rv">
@@ -246,39 +223,19 @@ export default function IpPage() {
           </p>
         </div>
         <div className="lkg rv">
-          <Link className="gc" href="/games/alpha">
-            <div className="gca" role="img" aria-label="Project Alpha key art">
-              <SafeImg src="/assets/alpha.jpg" alt="" />
-              <span className="sh" />
-            </div>
-            <div>
-              <span className="chip live">In Development</span>
-              <b>Project Alpha</b>
-              <p>Home of Universe 01 and the first Averix characters.</p>
-            </div>
-          </Link>
-          <Link className="gc" href="/games/beta">
-            <div className="gca" role="img" aria-label="Project Beta key art">
-              <SafeImg src="/assets/beta.jpg" alt="" />
-              <span className="sh" />
-            </div>
-            <div>
-              <span className="chip">Prototype</span>
-              <b>Project Beta</b>
-              <p>IP connection to be confirmed.</p>
-            </div>
-          </Link>
-          <Link className="gc" href="/games/gamma">
-            <div className="gca" role="img" aria-label="Project Gamma key art">
-              <SafeImg src="/assets/gamma.jpg" alt="" />
-              <span className="sh" />
-            </div>
-            <div>
-              <span className="chip">Coming Soon</span>
-              <b>Project Gamma</b>
-              <p>IP connection to be confirmed.</p>
-            </div>
-          </Link>
+          {games.map((g) => (
+            <Link key={g.slug} className="gc" href={`/games/${g.slug}`}>
+              <div className="gca" role="img" aria-label={`${g.name} key art`}>
+                <SafeImg src={g.keyArt || `/assets/${g.slug}.jpg`} alt="" />
+                <span className="sh" />
+              </div>
+              <div>
+                <span className={`chip${[3, 4, 6].includes(g.stage) ? ' live' : ''}`}>{g.status}</span>
+                <b>{g.name}</b>
+                <p>{links[g.slug]}</p>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
       <section className="sec" id="license">

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
 import PageFrame from '@/components/layout/PageFrame';
+import { getSiteSettings } from '@/lib/siteSettings';
 import '@/styles/news.css';
 import NewsFeed from '@/features/news/NewsFeed';
 import CopyBoilerplate from '@/features/news/CopyBoilerplate';
@@ -17,6 +18,7 @@ export const metadata: Metadata = pageMeta({
 });
 
 export default async function NewsPage() {
+  const site = await getSiteSettings();
   const { posts, fromCms, failed } = await getNewsPosts();
   return (
     <PageFrame page="news" toastMs={3200}>
@@ -30,7 +32,7 @@ export default async function NewsPage() {
         </h1>
         <p className="lead rv">Studio announcements, development updates and community news, all in one place.</p>
         <div className="cta rv">
-          <a className="btn p" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">Get updates on Discord</a>
+          <a className="btn p" href={site.discordUrl} target="_blank" rel="noopener noreferrer">Get updates on Discord</a>
           <a className="btn s" href="#press">Press kit</a>
         </div>
       </section>
@@ -143,10 +145,10 @@ export default async function NewsPage() {
               <p>Yes. Use the media enquiry form on the Partnerships page and choose Press &amp; media.</p>
             </details>
             <div className="cta">
-              <a className="btn p" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">Discord</a>
-              <a className="btn s" href="https://x.com/averixgames" target="_blank" rel="noopener noreferrer">X / Twitter</a>
-              <a className="btn s" href="https://www.tiktok.com/@avxgames" target="_blank" rel="noopener noreferrer">TikTok</a>
-              <a className="btn s" href="https://www.instagram.com/avxgame?stkn=am12azMyd24xaG90" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a className="btn p" href={site.discordUrl} target="_blank" rel="noopener noreferrer">Discord</a>
+              <a className="btn s" href={site.socials[1].href} target="_blank" rel="noopener noreferrer">X / Twitter</a>
+              <a className="btn s" href={site.socials[2].href} target="_blank" rel="noopener noreferrer">TikTok</a>
+              <a className="btn s" href={site.socials[3].href} target="_blank" rel="noopener noreferrer">Instagram</a>
             </div>
           </div>
         </div>
@@ -156,7 +158,7 @@ export default async function NewsPage() {
           <h2>Be here for the first drop.</h2>
           <p>Join the Averix community and hear it from the team before anyone else.</p>
           <div className="cta">
-            <a className="btn p" href="https://discord.gg/bwHavmJuf" target="_blank" rel="noopener noreferrer">Join the Discord</a>
+            <a className="btn p" href={site.discordUrl} target="_blank" rel="noopener noreferrer">Join the Discord</a>
             <Link className="btn s" href="/events">See events</Link>
           </div>
         </div>

@@ -213,3 +213,4 @@
 @keyframes home-sweep{to{transform:rotate(-28deg) translateX(120%)}}
 @keyframes home-logoIn{to{opacity:1;transform:none}}
 @keyframes home-introOut{to{opacity:0;visibility:hidden}}
+.pg-home .nc .nimg{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--ln)}

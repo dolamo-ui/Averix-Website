@@ -73,7 +73,7 @@ body.lock{overflow:hidden}
 /* closing banner (same as community page) */
 .pg-partnerships .end{margin:0 var(--pad);position:relative;overflow:hidden;isolation:isolate;padding:clamp(32px,6vw,80px);min-height:clamp(300px,30vw,400px);display:flex;align-items:center;border:1px solid var(--ln);background:linear-gradient(100deg,rgba(123,52,255,.32),rgba(5,6,10,.92) 62%),var(--bg2);clip-path:polygon(0 0,calc(100% - 44px) 0,100% 44px,100% 100%,0 100%)}
 .pg-partnerships .end:before{content:"";position:absolute;right:-6%;top:50%;width:min(46%,520px);aspect-ratio:1;transform:translateY(-50%);z-index:-1;background:radial-gradient(closest-side,rgba(0,229,255,.28),rgba(123,52,255,.2) 55%,transparent);filter:blur(10px)}
-.pg-partnerships .end:after{content:"";position:absolute;right:0;top:0;bottom:0;width:min(48%,540px);z-index:-1;background:url(/assets/handshake.jpg) center top/cover no-repeat;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 45%);mask-image:linear-gradient(to right,transparent 0,#000 45%)}
+.pg-partnerships .end:after{content:"";position:absolute;right:0;top:0;bottom:0;width:min(48%,540px);z-index:-1;background:url(https://i.imgur.com/5tley3r.jpeg) center top/cover no-repeat;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 45%);mask-image:linear-gradient(to right,transparent 0,#000 45%)}
 @media(max-width:760px){.pg-partnerships .end:after{width:100%;opacity:.3;-webkit-mask-image:none;mask-image:none}}
 .pg-partnerships .end h2{font-size:clamp(2rem,5.4vw,4.6rem);max-width:12ch}.pg-partnerships .end p{margin-top:1rem;max-width:42ch}.pg-partnerships .end .cta{margin-top:1.6rem}
 

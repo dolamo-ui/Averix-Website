@@ -24,7 +24,7 @@ export default async function EventsPage() {
     <PageFrame page="events">
       <EventsProvider cms={cms} failed={failed}>
       <section className="eh">
-        <img src="/assets/events-hero.jpg" alt="A squad of fantasy warriors charging up temple steps toward a glowing gate" width="1200" height="549" fetchPriority="high" />
+        <img src="https://i.imgur.com/uzPGXxJ.jpeg" alt="A squad of fantasy warriors charging up temple steps toward a glowing gate" width="1200" height="549" fetchPriority="high" />
         <div className="wrap">
           <div>
             <span className="eyebrow">AVERIX EVENTS · ONLINE FIRST</span>

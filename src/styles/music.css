@@ -70,8 +70,8 @@ body.lock{overflow:hidden}
 .pg-music .pl:hover{background:var(--cy);color:#05060a;transform:scale(1.1)}
 .pg-music .av{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.1rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--ln);font-size:.78rem;color:var(--mu)}
 .pg-music .av .lb{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--ln);padding:.3rem .7rem;border-radius:999px}
-.pg-music .av button{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:600;color:var(--tx);transition:color .2s}
-.pg-music .av button:hover{color:var(--cy)}
+.pg-music .av button,.pg-music .av a{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:600;color:var(--tx);transition:color .2s}
+.pg-music .av button:hover,.pg-music .av a:hover{color:var(--cy)}
 .pg-music .av svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .pg-music .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:1.5rem;flex-wrap:wrap;margin-bottom:2rem}
 .pg-music .sh h2{font-size:clamp(1.7rem,4vw,3rem)}

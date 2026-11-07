@@ -1284,3 +1284,199 @@ html.lite video {
     letter-spacing: 0.08em;
   }
 }
+
+/* ---------- phones: News, Events and home news show 2 cards per row, so people scroll less ---------- */
+@media (max-width: 640px) {
+  /* News page */
+  body .pg-news.mx .pg {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  body .pg-news.mx .pc {
+    padding: 12px;
+  }
+  body .pg-news.mx .pc:has(details[open]) {
+    grid-column: 1 / -1; /* an opened update gets the full width to read comfortably */
+  }
+  body .pg-news.mx .pc .meta {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  body .pg-news.mx .pc time {
+    font-size: 0.6rem;
+  }
+  body .pg-news.mx .pc h3 {
+    font-size: 1rem;
+    margin: 0.4rem 0;
+  }
+  body .pg-news.mx .pc > p {
+    font-size: 0.78rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+  body .pg-news.mx .pc details {
+    margin-top: 0.7rem;
+    padding-top: 0.6rem;
+  }
+  body .pg-news.mx .pc summary {
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+  }
+  body .pg-news.mx .pimg {
+    margin-bottom: 0.6rem;
+  }
+
+  /* Events page */
+  body .pg-events.mx #grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  body .pg-events.mx #grid .ea {
+    height: 128px;
+    padding: 10px;
+  }
+  body .pg-events.mx #grid .tg {
+    top: 8px;
+    left: 8px;
+    font-size: 0.5rem;
+    padding: 0.2rem 0.45rem;
+  }
+  body .pg-events.mx #grid .stt {
+    top: 32px;
+    left: 8px;
+    right: auto;
+    font-size: 0.5rem;
+    padding: 0.2rem 0.5rem;
+  }
+  body .pg-events.mx #grid .dt b {
+    font-size: 1.8rem;
+  }
+  body .pg-events.mx #grid .dt span {
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+  }
+  body .pg-events.mx #grid .eb {
+    padding: 10px 12px 12px;
+    gap: 8px;
+  }
+  body .pg-events.mx #grid .eb h3 {
+    font-size: 1.05rem;
+    line-height: 1.1;
+  }
+  body .pg-events.mx #grid .eb .g {
+    font-size: 0.7rem;
+  }
+  body .pg-events.mx #grid .em {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding-top: 8px;
+  }
+  body .pg-events.mx #grid .em > div:nth-child(3) {
+    display: none; /* slots are shown in the details panel */
+  }
+  body .pg-events.mx #grid .em dd {
+    font-size: 0.78rem;
+  }
+  body .pg-events.mx #grid .ef {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 0.62rem;
+  }
+
+  /* Home page: "Fresh from the studio" */
+  body .pg-home.mx .mx-snap.nw {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  body .pg-home.mx .mx-snap.nw > .nc {
+    padding: 12px;
+    gap: 0.5rem;
+  }
+  body .pg-home.mx .mx-snap.nw > .nc:last-child:nth-child(odd) {
+    grid-column: 1 / -1; /* a lone last card stays full width */
+  }
+  body .pg-home.mx .nw .nc h3 {
+    font-size: 1rem;
+  }
+  body .pg-home.mx .nw .nc p {
+    font-size: 0.78rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+}
+
+/* ---------- phones: game pages (Alpha, Beta, Gamma) use a 2-column grid so the page is shorter ---------- */
+@media (max-width: 640px) {
+  /* Screenshots: two side by side, a lone last one goes full width */
+  body .pg-site.mx .gd .shots {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  body .pg-site.mx .gd .shot:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  body .pg-site.mx .gd .shot.empty span {
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
+  }
+
+  /* Pipeline: 6 steps in two columns (3 rows), reading down each column */
+  body .pg-site.mx .gd .pipe {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    gap: 0.9rem 0.6rem;
+  }
+  body .pg-site.mx .gd .pipe li {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    gap: 0.55rem;
+  }
+
+  /* Team: two people per row */
+  body .pg-site.mx .gd .team {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  body .pg-site.mx .gd .team li {
+    padding: 0.9rem 0.8rem;
+  }
+  body .pg-site.mx .gd .team li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  body .pg-site.mx .gd .team i {
+    font-size: 2.2rem;
+    margin-bottom: 0.3rem;
+  }
+  body .pg-site.mx .gd .team b {
+    font-size: 0.85rem;
+  }
+  body .pg-site.mx .gd .team span {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* "More from Averix": 2 x 2 */
+  body .pg-site.mx .gd .oth {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  body .pg-site.mx .gd .oth a {
+    padding: 1rem 0.9rem;
+  }
+  body .pg-site.mx .gd .oth em {
+    font-size: 1.6rem;
+  }
+  body .pg-site.mx .gd .oth b {
+    font-size: 0.85rem;
+  }
+  body .pg-site.mx .gd .oth small {
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+  }
+}
