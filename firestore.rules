@@ -23,6 +23,60 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Games: everyone can read, only admins can write (status, texts, links, added games).
+    match /games/{game} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Music tracks: everyone can read, only admins can write.
+    match /music/{music} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Music releases: everyone can read, only admins can write.
+    match /musicReleases/{release} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Team members: everyone can read, only admins can write.
+    match /team/{member} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // IP characters: everyone can read, only admins can write.
+    match /characters/{character} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // IP page content (featured universe and game links): everyone can read, only admins can write.
+    match /ip/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Concept art vault: everyone can read, only admins can write.
+    match /ipVault/{item} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Home page content (Our Universes cards): everyone can read, only admins can write.
+    match /home/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Site settings: everyone can read, only admins can write.
+    match /settings/{setting} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Enquiries from the Partnerships form:
     // - anyone can SEND one (create), but only with the expected fields and sensible sizes
     // - only admins can read, update (mark handled) or delete

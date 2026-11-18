@@ -96,3 +96,6 @@ The site is already prepared. When you are ready:
 3. Put the URL in `.env.local` and in Netlify as `NEXT_PUBLIC_ENQUIRY_WEBHOOK_URL=...`, then redeploy.
 Every new enquiry is then also sent to Make. Leave it empty to keep the automation off.
 Note: the webhook URL is visible in the page code, so if you ever see junk entries, replace the URL in Make and Netlify with a new one.
+
+## One-time: publish the complete rules (fixes every "Could not load ... check your Firestore rules" message in /admin)
+`firestore.rules` now has a block for every collection the site uses: newsPosts, events, games, music, musicReleases, team, characters, ip, ipVault, home, settings and enquiries. Firestore > **Rules**: paste the whole file, replace `PASTE_ADMIN_USER_UID_HERE` with your UID (Authentication > Users), click **Publish**. Then sign out and in again on /admin and refresh.
