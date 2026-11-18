@@ -2,8 +2,8 @@
  * Built-in content for the parts of the IP page that the client edits in /admin > IP.
  * These are the texts the page showed before the admin existed, so nothing changes until she edits something.
  */
-export type GameSlug = 'alpha' | 'beta' | 'gamma';
-export const GAME_SLUGS: GameSlug[] = ['alpha', 'beta', 'gamma'];
+export type GameSlug = 'alpha';
+export const GAME_SLUGS: GameSlug[] = ['alpha'];
 
 /** Firestore document ids inside the `ip` collection. */
 export const UNIVERSE_DOC = 'universe';
@@ -44,8 +44,6 @@ export const UNIVERSE: Universe = {
 /** The one-line "how this game connects to the IP" shown on each card in IP × Games. */
 export const GAME_LINKS: Record<GameSlug, string> = {
   alpha: 'Home of Universe 01 and the first Averix characters.',
-  beta: 'IP connection to be confirmed.',
-  gamma: 'IP connection to be confirmed.',
 };
 
 export interface VaultItem {

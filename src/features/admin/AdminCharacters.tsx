@@ -171,8 +171,8 @@ export default function AdminCharacters({ setMsg }: { setMsg: (m: string) => voi
             </label>
           </>
         )}
+        <small className="muted"><b>Cartoon / 3D avatar</b>: paste an https link or upload. Best: a front-facing PNG with a transparent background. It replaces the silhouette on the card and in the profile. Locked characters show it as a dark shadow.</small>
         <ImageField value={form.img} onChange={(v) => set('img', v)} />
-        <small className="muted">Artwork: a tall portrait works best. Without one, a silhouette is shown.</small>
         <div className="bt">
           <button className="btn p" type="submit" disabled={busy}>{busy ? 'Saving…' : 'Publish'}</button>
           <button className="btn s" type="button" onClick={() => setForm(null)}>Cancel</button>

@@ -156,8 +156,6 @@ function GamesLinkEditor({ setMsg }: Msg) {
         const x = snap.data() as Record<string, unknown>;
         setF({
           alpha: String(x.alpha ?? '') || GAME_LINKS.alpha,
-          beta: String(x.beta ?? '') || GAME_LINKS.beta,
-          gamma: String(x.gamma ?? '') || GAME_LINKS.gamma,
         });
       } catch {
         setMsg('Could not load. Check that your Firestore rules have the "ip" block and that you are allowed to edit.');
@@ -172,7 +170,7 @@ function GamesLinkEditor({ setMsg }: Msg) {
     try {
       const { db, firestore } = await getFirebase();
       await firestore.setDoc(firestore.doc(db, IP_COLLECTION, LINKS_DOC), {
-        alpha: f.alpha.trim(), beta: f.beta.trim(), gamma: f.gamma.trim(),
+        alpha: f.alpha.trim(),
       });
       setMsg('Saved. The IP × Games cards update within about a minute.');
     } catch {

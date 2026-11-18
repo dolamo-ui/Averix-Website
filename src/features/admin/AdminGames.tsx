@@ -4,12 +4,14 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { GAMES_COLLECTION, getFirebase } from '@/lib/firebase';
 import { cleanImageUrl } from '@/lib/imageUrl';
 import { youtubeId } from '@/lib/youtube';
-import { GAMES, PIPELINE } from '@/features/games/gamesData';
+import { GAMES, PIPELINE, blankGame } from '@/features/games/gamesData';
 import ImageField from './ImageField';
 import UploadButton from './UploadButton';
 
 /** Everything the client can set per game. Empty text keeps the built-in text of that game. */
 interface Saved {
+  name: string;
+  createdAt: number;
   status: string;
   tagline: string;
   description: string;
@@ -25,7 +27,7 @@ interface Saved {
   downloadUrl: string;
   playUrl: string;
 }
-interface Form extends Saved {
+interface Form extends Omit<Saved, 'name' | 'createdAt'> {
   slug: string;
   name: string;
 }
@@ -49,6 +51,8 @@ export default function AdminGames({ setMsg }: Props) {
         const x = d.data() as Record<string, unknown>;
         const s = (k: string) => String(x[k] ?? '');
         out[d.id] = {
+          name: s('name'),
+          createdAt: Number(x.createdAt ?? 0),
           status: s('status'),
           tagline: s('tagline'),
           description: s('description'),
@@ -76,7 +80,7 @@ export default function AdminGames({ setMsg }: Props) {
   }, [load]);
 
   const edit = (slug: string) => {
-    const g = GAMES.find((x) => x.slug === slug);
+    const g = GAMES.find((x) => x.slug === slug) ?? (saved[slug] ? blankGame(slug, saved[slug].name || slug) : undefined);
     if (!g) return;
     const s = saved[slug];
     // Empty boxes show the built-in text, so the client edits what is on the site now.
@@ -102,6 +106,24 @@ export default function AdminGames({ setMsg }: Props) {
     window.scrollTo({ top: 0 });
   };
 
+  const newGame = () => {
+    setForm({ slug: '', name: '', status: 'In Development', tagline: '', description: '', genre: '', platforms: '', release: '', gameplay: '', story: '', keyArt: '', trailerUrl: '', screenshots: [''], waitlistUrl: '', downloadUrl: '', playUrl: '' });
+    setMsg('');
+    window.scrollTo({ top: 0 });
+  };
+
+  async function remove(slug: string) {
+    if (!window.confirm('Delete this game from the site?')) return;
+    try {
+      const { db, firestore } = await getFirebase();
+      await firestore.deleteDoc(firestore.doc(db, GAMES_COLLECTION, slug));
+      setMsg('Game deleted.');
+      await load();
+    } catch {
+      setMsg('Could not delete. You may not have permission.');
+    }
+  }
+
   const setShot = (i: number, v: string) =>
     setForm((f) => (f ? { ...f, screenshots: f.screenshots.map((x, j) => (j === i ? v : x)) } : f));
   const set = (k: keyof Form, v: string) => setForm((f) => (f ? { ...f, [k]: v } : f));
@@ -109,6 +131,16 @@ export default function AdminGames({ setMsg }: Props) {
   async function save(e: FormEvent) {
     e.preventDefault();
     if (!form) return;
+    const custom = !GAMES.some((g) => g.slug === form.slug);
+    let slug = form.slug;
+    if (custom) {
+      if (!form.name.trim()) return setMsg('Give the game a name.');
+      if (!slug) {
+        slug = form.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+        if (!slug) return setMsg('Use letters or numbers in the name.');
+        if (GAMES.some((g) => g.slug === slug) || saved[slug]) return setMsg('A game with that name already exists.');
+      }
+    }
     const trailer = form.trailerUrl.trim();
     if (trailer && !youtubeId(trailer)) return setMsg('The trailer link must be a YouTube link, for example https://www.youtube.com/watch?v=...');
     const shots = form.screenshots.map((s) => s.trim()).filter(Boolean);
@@ -123,7 +155,8 @@ export default function AdminGames({ setMsg }: Props) {
     setMsg('');
     try {
       const { db, firestore } = await getFirebase();
-      await firestore.setDoc(firestore.doc(db, GAMES_COLLECTION, form.slug), {
+      await firestore.setDoc(firestore.doc(db, GAMES_COLLECTION, slug), {
+        ...(custom ? { name: form.name.trim(), createdAt: saved[slug]?.createdAt || Date.now() } : {}),
         status: form.status,
         tagline: form.tagline.trim(),
         description: form.description.trim(),
@@ -152,7 +185,13 @@ export default function AdminGames({ setMsg }: Props) {
     const vid = youtubeId(form.trailerUrl);
     return (
       <form className="box" onSubmit={save}>
-        <h2>{form.name}</h2>
+        <h2>{form.name || 'Add a game'}</h2>
+        {!GAMES.some((g) => g.slug === form.slug) && (
+          <label>
+            Game name
+            <input value={form.name} maxLength={60} onChange={(e) => set('name', e.target.value)} />
+          </label>
+        )}
 
         <div className="row">
           <label>
@@ -273,26 +312,45 @@ export default function AdminGames({ setMsg }: Props) {
     );
   }
 
+  const rows = [
+    ...GAMES.map((g) => ({ slug: g.slug, name: g.name, custom: false })),
+    ...Object.entries(saved)
+      .filter(([k, v]) => !GAMES.some((g) => g.slug === k) && v.name)
+      .sort((x, y) => x[1].createdAt - y[1].createdAt)
+      .map(([k, v]) => ({ slug: k, name: v.name || k, custom: true })),
+  ];
   return (
-    <ul className="list">
-      {GAMES.map((g) => {
-        const s = saved[g.slug];
-        return (
-          <li key={g.slug}>
-            <div>
-              <b>{g.name}</b>
-              <small>
-                {s?.status || g.status} · {s?.trailerUrl ? 'Trailer added' : 'No trailer'} · {s?.screenshots?.length ?? 0} screenshot{(s?.screenshots?.length ?? 0) === 1 ? '' : 's'}
-              </small>
-            </div>
-            <div className="bt">
-              <button className="btn s" type="button" onClick={() => edit(g.slug)}>
-                Edit
-              </button>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+    <>
+      <div className="bt">
+        <button className="btn p" type="button" onClick={newGame}>
+          Add a game
+        </button>
+      </div>
+      <ul className="list">
+        {rows.map((r) => {
+          const s = saved[r.slug];
+          return (
+            <li key={r.slug}>
+              <div>
+                <b>{r.name}</b>
+                <small>
+                  {s?.status || GAMES.find((x) => x.slug === r.slug)?.status || 'In Development'} · {s?.trailerUrl ? 'Trailer added' : 'No trailer'} · {s?.screenshots?.length ?? 0} screenshot{(s?.screenshots?.length ?? 0) === 1 ? '' : 's'}
+                </small>
+              </div>
+              <div className="bt">
+                <button className="btn s" type="button" onClick={() => edit(r.slug)}>
+                  Edit
+                </button>
+                {r.custom && (
+                  <button className="btn s danger" type="button" onClick={() => remove(r.slug)}>
+                    Delete
+                  </button>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }

@@ -283,7 +283,7 @@ export default function AdminMusic({ setMsg }: Props) {
           </div>
           <ImageField value={form.cover} onChange={(v) => setR('cover', v)} />
           <label>
-            Listen link <small>(optional. Spotify, YouTube, SoundCloud... the play button opens it. Empty = “Audio previews unlock at release”.)</small>
+            Listen link <small>(optional. A YouTube or YouTube Music link plays on the page; Spotify, SoundCloud and other links open in a new tab. Empty = “Audio previews unlock at release”.)</small>
             <input type="url" value={form.url} placeholder="https://..." onChange={(e) => setR('url', e.target.value)} />
           </label>
           <div className="bt">
@@ -372,7 +372,7 @@ export default function AdminMusic({ setMsg }: Props) {
               <span className="tnum">{String(i + 1).padStart(2, '0')}</span>
               <input value={t.title} placeholder="Track title" aria-label={`Track ${i + 1} title`} onChange={(e) => setTrack(i, 'title', e.target.value)} />
               <input value={t.time} placeholder="3:42" aria-label={`Track ${i + 1} length`} className="tm" onChange={(e) => setTrack(i, 'time', e.target.value)} />
-              <input type="url" value={t.url} placeholder="Listen link (optional)" aria-label={`Track ${i + 1} listen link`} className="tu" onChange={(e) => setTrack(i, 'url', e.target.value)} />
+              <input type="url" value={t.url} placeholder="YouTube / YouTube Music link (plays on the page) or other link (opens a new tab)" aria-label={`Track ${i + 1} listen link`} className="tu" onChange={(e) => setTrack(i, 'url', e.target.value)} />
               <div className="tb">
                 <button className="btn s" type="button" onClick={() => moveTrack(i, -1)} disabled={i === 0} aria-label="Move up">↑</button>
                 <button className="btn s" type="button" onClick={() => moveTrack(i, 1)} disabled={i === album.tracks.length - 1} aria-label="Move down">↓</button>

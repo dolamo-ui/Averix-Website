@@ -30,8 +30,6 @@ export async function getGameLinks(): Promise<Record<GameSlug, string>> {
   if (!d) return GAME_LINKS;
   return {
     alpha: asStr(d.alpha).trim() || GAME_LINKS.alpha,
-    beta: asStr(d.beta).trim() || GAME_LINKS.beta,
-    gamma: asStr(d.gamma).trim() || GAME_LINKS.gamma,
   };
 }
 

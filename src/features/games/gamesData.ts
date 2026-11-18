@@ -7,7 +7,7 @@
 export const PIPELINE = ['Concept', 'Prototype', 'In Development', 'Early Access', 'Coming Soon', 'Released'] as const;
 
 export interface Game {
-  slug: 'alpha' | 'beta' | 'gamma';
+  slug: string;
   name: string;
   no: string;
   /** Accent colour for this game's page. */
@@ -67,64 +67,24 @@ export const GAMES: Game[] = [
     },
     primaryAction: 'waitlist',
   },
-  {
-    slug: 'beta',
-    name: 'Project Beta',
-    no: '02',
-    accent: '#9a6bff',
-    status: 'Prototype',
-    stage: 2,
-    tagline: 'An experiment in how play can feel.',
-    description:
-      'Early experimental prototype exploring new mechanics and interactive gameplay loops. Details to be announced.',
-    genre: 'To be announced',
-    platforms: 'To be announced',
-    release: 'To be announced',
-    gameplay:
-      'Project Beta is a testing ground for new ideas. The team is trying out mechanics and gameplay loops to find what feels great to play. What survives the experiments will shape what this project becomes.',
-    story:
-      'Prototypes are where Averix tests its boldest ideas quickly and honestly. Project Beta is at that early stage. As the concept settles, we will share what we learned and where it is heading.',
-    logo: null,
-    keyArt: null,
-    trailer: null,
-    screenshots: [],
-    links: { waitlist: null, download: null, play: null },
-    linkMessages: {
-      waitlist: 'The waiting list opens soon. Join the Discord to hear first.',
-      download: 'Downloads are not available yet.',
-      play: 'Alpha test sign-up is not open yet.',
-    },
-    primaryAction: 'play',
-  },
-  {
-    slug: 'gamma',
-    name: 'Project Gamma',
-    no: '03',
-    accent: '#5ad0ff',
-    status: 'Coming Soon',
-    stage: 5,
-    tagline: 'A new Averix release is on the way.',
-    description:
-      'Upcoming studio release. Further announcements regarding gameplay trailers and release dates will be published soon.',
-    genre: 'To be announced',
-    platforms: 'To be announced',
-    release: 'Release date to be announced',
-    gameplay:
-      'Gameplay trailers and details will be published here ahead of release. Follow the studio channels to be among the first to see them.',
-    story:
-      'Project Gamma is the furthest along of the Averix projects. The team will share the story behind it, including how it was made and who made it, as the announcement date approaches.',
-    logo: null,
-    keyArt: null,
-    trailer: null,
-    screenshots: [],
-    links: { waitlist: null, download: null, play: null },
-    linkMessages: {
-      waitlist: 'The waiting list opens soon. Join the Discord to hear first.',
-      download: 'Downloads are not available yet.',
-      play: 'Pre-registration is not open yet.',
-    },
-    primaryAction: 'waitlist',
-  },
 ];
+
+/** Status tabs on the Games page (the default tab is the first one). */
+export const FILTERS = ['In Development', 'Prototype', 'Coming Soon', 'Early Access', 'Released'] as const;
+export const statusId = (s: string) => s.toLowerCase().trim().replace(/\s+/g, '-');
+export const ACCENTS = ['#00e5ff', '#9a6bff', '#5ad0ff', '#ff6bd6', '#ffb84d'];
+
+/** Starting point for games the client adds in /admin. */
+export const blankGame = (slug: string, name: string, n = 4): Game => ({
+  slug, name, no: String(n).padStart(2, '0'), accent: ACCENTS[(n - 1) % ACCENTS.length],
+  status: 'In Development', stage: 3, tagline: 'An Averix original.',
+  description: 'More details about this game are coming soon.',
+  genre: 'To be announced', platforms: 'To be announced', release: 'To be announced',
+  gameplay: 'Gameplay details will be shared here soon.', story: 'The story behind this game will be shared here soon.',
+  logo: null, keyArt: null, trailer: null, screenshots: [],
+  links: { waitlist: null, download: null, play: null },
+  linkMessages: { waitlist: 'The waiting list opens soon. Join the Discord to hear first.', download: 'Downloads are not available yet.', play: 'Not playable yet.' },
+  primaryAction: 'waitlist',
+});
 
 export const getGame = (slug: string) => GAMES.find((g) => g.slug === slug);

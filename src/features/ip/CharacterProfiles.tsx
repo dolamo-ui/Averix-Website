@@ -6,7 +6,7 @@ import SafeImg from '@/components/ui/SafeImg';
 import type { Character } from './characters';
 
 const gameHref = (g?: string) => {
-  const m = g?.match(/alpha|beta|gamma/i);
+  const m = g?.match(/alpha/i);
   return m ? `/games/${m[0].toLowerCase()}` : '/games';
 };
 
@@ -32,11 +32,8 @@ function Silhouette({ color, id }: { color: string; id: string }) {
 
 function Portrait({ c, id }: { c: Character; id: string }) {
   return (
-    <div className="pt">
-      {c.img && (
-        <SafeImg src={c.img} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-      )}
-      <Silhouette color={c.color} id={id} />
+    <div className={c.open ? 'pt' : 'pt lkd'}>
+      {c.img ? <SafeImg className="avatar" src={c.img} alt={c.open ? c.name : ''} /> : <Silhouette color={c.color} id={id} />}
       {!c.open && <span className="stamp">CLASSIFIED</span>}
     </div>
   );

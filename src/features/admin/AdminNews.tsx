@@ -12,6 +12,7 @@ import AdminTeam from './AdminTeam';
 import AdminCharacters from './AdminCharacters';
 import AdminIp from './AdminIp';
 import AdminSettings from './AdminSettings';
+import AdminUniverses from './AdminUniverses';
 import ImageField from './ImageField';
 import { cleanImageUrl } from '@/lib/imageUrl';
 
@@ -41,7 +42,7 @@ export default function AdminNews() {
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState<'news' | 'events' | 'games' | 'music' | 'team' | 'ip' | 'characters' | 'settings' | 'enquiries'>('news');
+  const [tab, setTab] = useState<'news' | 'events' | 'games' | 'music' | 'team' | 'ip' | 'universes' | 'characters' | 'settings' | 'enquiries'>('news');
   const [newEnq, setNewEnq] = useState(0);
 
   const load = useCallback(async () => {
@@ -202,6 +203,7 @@ export default function AdminNews() {
             <button type="button" role="tab" aria-selected={tab === 'music'} onClick={() => { setTab('music'); setForm(null); setMsg(''); }}>Music</button>
             <button type="button" role="tab" aria-selected={tab === 'team'} onClick={() => { setTab('team'); setForm(null); setMsg(''); }}>Team</button>
             <button type="button" role="tab" aria-selected={tab === 'ip'} onClick={() => { setTab('ip'); setForm(null); setMsg(''); }}>IP</button>
+            <button type="button" role="tab" aria-selected={tab === 'universes'} onClick={() => { setTab('universes'); setForm(null); setMsg(''); }}>Universes</button>
             <button type="button" role="tab" aria-selected={tab === 'characters'} onClick={() => { setTab('characters'); setForm(null); setMsg(''); }}>Characters</button>
             <button type="button" role="tab" aria-selected={tab === 'settings'} onClick={() => { setTab('settings'); setForm(null); setMsg(''); }}>Settings</button>
             <button type="button" role="tab" aria-selected={tab === 'enquiries'} onClick={() => { setTab('enquiries'); setForm(null); setMsg(''); }}>Enquiries{newEnq > 0 ? ` (${newEnq})` : ''}</button>
@@ -217,6 +219,8 @@ export default function AdminNews() {
             <AdminTeam setMsg={setMsg} />
           ) : tab === 'ip' ? (
             <AdminIp setMsg={setMsg} />
+          ) : tab === 'universes' ? (
+            <AdminUniverses setMsg={setMsg} />
           ) : tab === 'characters' ? (
             <AdminCharacters setMsg={setMsg} />
           ) : tab === 'settings' ? (
