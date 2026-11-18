@@ -10,7 +10,7 @@ export function youtubeId(input: string | undefined | null): string {
   if (ID.test(v)) return v;
   try {
     const u = new URL(v);
-    const host = u.hostname.replace(/^(www|m)\./, '');
+    const host = u.hostname.replace(/^(www|m|music)\./, '');
     let id: string | null | undefined = '';
     if (host === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
     else if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
@@ -21,4 +21,23 @@ export function youtubeId(input: string | undefined | null): string {
   } catch {
     return '';
   }
+}
+
+/**
+ * Embed address for a YouTube or YouTube Music link (video, song or playlist), or '' when the link is not from YouTube.
+ * Used by the music page to play a track on the page itself.
+ */
+export function youtubeEmbed(input: string | undefined | null, autoplay = true): string {
+  const id = youtubeId(input);
+  let list = '';
+  try {
+    list = new URL((input ?? '').trim()).searchParams.get('list') ?? '';
+  } catch {
+    /* not a link */
+  }
+  if (!/^[\w-]+$/.test(list)) list = '';
+  const q = `${autoplay ? 'autoplay=1&' : ''}rel=0&playsinline=1`;
+  if (id) return `https://www.youtube-nocookie.com/embed/${id}?${q}${list ? `&list=${list}` : ''}`;
+  if (list) return `https://www.youtube-nocookie.com/embed/videoseries?list=${list}&${q}`;
+  return '';
 }

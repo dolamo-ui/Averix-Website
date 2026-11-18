@@ -13,6 +13,7 @@ import { getNewsPosts } from '@/features/news/getNews';
 import HomeEffects from '@/features/home/HomeEffects';
 import HomeEvents from '@/features/events/HomeEvents';
 import { getEvents } from '@/features/events/getEvents';
+import { getUniverses } from '@/features/home/getUniverses';
 
 // Re-check the admin for new or changed events at most once a minute.
 export const revalidate = 60;
@@ -25,6 +26,7 @@ export const metadata: Metadata = pageMeta({
 
 export default async function HomePage() {
   const site = await getSiteSettings();
+  const universes = await getUniverses();
   const [{ cms, failed }, { posts: newsPosts, fromCms: newsFromCms, failed: newsFailed }] = await Promise.all([getEvents(), getNewsPosts()]);
   return (
     <PageFrame page="home" scrollPad={70} reveal={false} before={
@@ -80,31 +82,22 @@ export default async function HomePage() {
           </p>
         </div>
         <SnapRow className="gg" label="Averix projects">
-          <article className="pj big rv" data-href="/games" style={{ cursor: "pointer" }}>
-            <div className="art a1" />
-            <span className="st">CONCEPT · DETAILS SOON</span>
-            <h3>Untitled Game 01</h3>
-            <p>
-              A new world in the making. Title, key art, genre and platforms will be revealed here as the project takes shape.
-            </p>
-            <Link className="d" href="/games">Discover project</Link>
-          </article>
-          <article className="pj rv" data-href="/games" style={{ cursor: "pointer" }}>
-            <div className="art a2" />
-            <span className="st">CONCEPT · DETAILS SOON</span>
-            <h3>Untitled Game 02</h3>
-            <p>
-              Room for the next big idea. Prototypes, gameplay and development stories will be shared here when they're ready.
-            </p>
-          </article>
-          <article className="pj rv" data-href="/games" style={{ cursor: "pointer" }}>
-            <div className="art a3" />
-            <span className="st">CONCEPT · DETAILS SOON</span>
-            <h3>Original World 01</h3>
-            <p>
-              Characters, worlds and stories designed to live beyond the screen. Original Averix IP will be introduced here.
-            </p>
-          </article>
+          {universes.map((u, i) => {
+            const internal = u.link.startsWith('/');
+            return (
+              <article key={u.id} className={`pj${i === 0 ? ' big' : ''} rv`} data-href={internal ? u.link : undefined} style={u.link ? { cursor: 'pointer' } : undefined}>
+                <div className={`art a${i + 1}${u.img ? ' has-img' : ''}`} style={u.img ? { backgroundImage: `url("${u.img}")` } : undefined} />
+                <span className="st">{u.status}</span>
+                <h3>{u.title}</h3>
+                <p>{u.desc}</p>
+                {u.link && u.button && (internal ? (
+                  <Link className="d" href={u.link}>{u.button}</Link>
+                ) : (
+                  <a className="d" href={u.link} target="_blank" rel="noopener noreferrer">{u.button}</a>
+                ))}
+              </article>
+            );
+          })}
         </SnapRow>
         <div className="gn rv">
           <p>

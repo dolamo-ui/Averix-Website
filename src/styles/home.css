@@ -77,6 +77,8 @@
 .pg-home .a3{background:linear-gradient(135deg,#05060a 30%,#2a0d6b 70%,#7b34ff)}
 .pg-home .a2:before,.pg-home .a3:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 22px,rgba(255,255,255,.07) 22px 23px)}
 .pg-home .st{align-self:flex-start;font-size:.65rem;letter-spacing:.2em;border:1px solid var(--cy);color:var(--cy);padding:.25rem .6rem;margin-bottom:1rem;background:rgba(5,6,10,.5)}
+.pg-home .pj .art.has-img{background-size:cover;background-position:center;background-repeat:no-repeat}
+.pg-home .pj .art.has-img:before{display:none}
 .pg-home .pj h3{font-size:clamp(1.4rem,3vw,2.6rem);margin-bottom:.6rem}
 .pg-home .pj p{font-size:.9rem;color:#b9bdcc}
 .pg-home .pj .d{margin-top:1rem;font-size:.72rem;letter-spacing:.2em;font-weight:700;color:var(--tx);display:inline-flex;gap:.6rem;align-items:center}

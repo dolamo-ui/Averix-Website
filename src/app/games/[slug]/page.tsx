@@ -7,7 +7,7 @@ import SafeImg from '@/components/ui/SafeImg';
 import { pageMeta } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site';
 import { getSiteSettings } from '@/lib/siteSettings';
-import { GAMES, PIPELINE, getGame, type Game } from '@/features/games/gamesData';
+import { GAMES, PIPELINE, type Game } from '@/features/games/gamesData';
 import { getGamesWithAdmin } from '@/features/games/getGames';
 import { getTeam } from '@/features/about/getTeam';
 import { initialsOf } from '@/features/about/teamData';
@@ -25,18 +25,18 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const g = getGame(slug);
+  const g = (await getGamesWithAdmin()).find((x) => x.slug === slug);
   if (!g) return {};
   return pageMeta({
     title: `${g.name} | Averix Games`,
     description: `${g.name} (${g.status}) from Averix Games. ${g.description}`,
     path: `/games/${g.slug}`,
-    image: `/og/${g.slug}.png`,
+    image: GAMES.some((x) => x.slug === g.slug) ? `/og/${g.slug}.png` : undefined,
   });
 }
 
 function Action({ game, kind, variant }: { game: Game; kind: 'waitlist' | 'download' | 'play'; variant: 'p' | 's' }) {
-  const label = { waitlist: 'Join Waiting List', download: 'Download', play: game.slug === 'beta' ? 'Join Alpha' : game.slug === 'gamma' ? 'Pre-Register' : 'Play' }[kind];
+  const label = { waitlist: 'Join Waiting List', download: 'Download', play: 'Play' }[kind];
   const url = game.links[kind];
   if (url) {
     return (

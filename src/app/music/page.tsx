@@ -7,6 +7,7 @@ import SafeImg from '@/components/ui/SafeImg';
 import '@/styles/music.css';
 import Waveform from '@/features/music/Waveform';
 import PlayButton from '@/features/music/PlayButton';
+import NowPlaying from '@/features/music/NowPlaying';
 import { getMusic } from '@/features/music/getMusic';
 
 // Re-check the admin for changes at most once a minute.
@@ -259,6 +260,7 @@ export default async function MusicPage() {
           Creativity<br />has no limits.
         </p>
       </section>
+      <NowPlaying />
     </PageFrame>
   );
 }

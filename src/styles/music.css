@@ -159,3 +159,12 @@ body.lock{overflow:hidden}
 .pg-music .rel-i{width:96px;height:96px;background:linear-gradient(135deg,#2a1470,#0a0f24 60%,#00798f)}
 .pg-music .rel-i img{width:96px;height:96px;object-fit:cover;display:block}
 .pg-music .cb-img{background:linear-gradient(120deg,#1b1450,#0a0b1c)}
+
+.pg-music .np{position:fixed;right:16px;bottom:16px;z-index:60;width:min(360px,calc(100vw - 32px));background:#0b0d17;border:1px solid var(--cy);box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.pg-music .np-h{display:flex;align-items:center;gap:.8rem;padding:.55rem .8rem;font-size:.68rem;letter-spacing:.08em;color:var(--mu)}
+.pg-music .np-h span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pg-music .np-h b{color:#fff}
+.pg-music .np-h a{color:var(--cy);text-decoration:underline;white-space:nowrap}
+.pg-music .np-h button{font-size:1.3rem;line-height:1;color:var(--mu);background:none;border:0;cursor:pointer}
+.pg-music .np-h button:hover{color:var(--cy)}
+.pg-music .np iframe{display:block;width:100%;aspect-ratio:16/9;border:0}

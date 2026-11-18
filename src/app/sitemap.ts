@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site';
-import { GAMES } from '@/features/games/gamesData';
+import { getGamesWithAdmin } from '@/features/games/getGames';
 
 // Every public page. Game pages are added automatically from src/features/games/gamesData.ts.
 const PAGES: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] }[] = [
@@ -17,8 +17,9 @@ const PAGES: { path: string; priority: number; changeFrequency: MetadataRoute.Si
   { path: '/terms', priority: 0.3, changeFrequency: 'yearly' },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
+  const GAMES = await getGamesWithAdmin();
   return [
     ...PAGES.map((p) => ({ url: `${SITE_URL}${p.path}`, lastModified, changeFrequency: p.changeFrequency, priority: p.priority })),
     ...GAMES.map((g) => ({ url: `${SITE_URL}/games/${g.slug}`, lastModified, changeFrequency: 'weekly' as const, priority: 0.8 })),

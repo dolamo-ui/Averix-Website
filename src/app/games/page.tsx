@@ -7,7 +7,8 @@ import SafeImg from '@/components/ui/SafeImg';
 import '@/styles/games.css';
 import TiltEffect from '@/components/ui/TiltEffect';
 import { getGamesWithAdmin } from '@/features/games/getGames';
-import { PIPELINE, type Game } from '@/features/games/gamesData';
+import GameFilter from '@/features/games/GameFilter';
+import { FILTERS, PIPELINE, statusId, type Game } from '@/features/games/gamesData';
 
 // Re-check the admin (status, texts, links) at most once a minute.
 export const revalidate = 60;
@@ -35,16 +36,74 @@ function Meter({ g }: { g: Game }) {
 
 export const metadata: Metadata = pageMeta({
   title: 'Games | Averix Games',
-  description: "Original games and projects from Averix Games: Project Alpha, Project Beta and Project Gamma.",
+  description: "Original games and projects from Averix Games, from games in development to released titles.",
   path: '/games',
 });
 
+const BUILT_IN = ['alpha'];
+const VARIANT: Record<string, string> = { alpha: 'k-a' };
+const FALLBACK_ART: Record<string, string> = { alpha: '/assets/alpha.jpg' };
+
+/** Main button: depends on the status (built-in games keep their original wording). */
+function primary(g: Game): { url: string | null; msg: string; label: string } {
+  if (g.status === 'Released') return { url: g.links.download || g.links.play, msg: g.linkMessages.download, label: g.links.download ? 'Download' : 'Play Now' };
+  if (g.status === 'Early Access') return { url: g.links.play || g.links.download, msg: g.linkMessages.play, label: 'Play Early Access' };
+  return { url: g.links.waitlist, msg: g.linkMessages.waitlist, label: 'Join Waiting List' };
+}
+
+function Art({ g }: { g: Game }) {
+  return (
+    <div className="art">
+      <SafeImg className="ph" src={g.keyArt || FALLBACK_ART[g.slug] || '/assets/universe-bg.jpg'} alt={`${g.name} key art`} />
+      {g.slug === 'alpha' && (
+        <div className="tilt">
+          <div className="ring r1" /><div className="ring r2" /><div className="ring r3" /><div className="beam" /><div className="core" />
+          <span className="tagx">ASSET_01 · CLASSIFIED</span>
+        </div>
+      )}
+      {!BUILT_IN.includes(g.slug) && (
+        <div className="tilt">
+          <span className="tagx">{`GAME_${g.no} · ${g.status.toUpperCase()}`}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Card({ g, i }: { g: Game; i: number }) {
+  const main = primary(g);
+  const style = { '--i': String(i), ...(BUILT_IN.includes(g.slug) ? {} : { '--c': g.accent }) } as CSSProperties;
+  return (
+    <article className={`pj2 ${VARIANT[g.slug] ?? ''}`} id={g.slug} data-st={statusId(g.status)} style={style}>
+      <Art g={g} />
+      <div className="inf">
+        <div className="no" aria-hidden="true">{g.no}</div>
+        <span className={`chip${g.status === 'In Development' ? ' live' : ''}`}>{g.status}</span>
+        <p className="meta">{tbd('Genre', g.genre)} <i>•</i> {tbd('Platform', g.platforms)}</p>
+        <h2>
+          <Link href={`/games/${g.slug}`}>{g.name}</Link>
+        </h2>
+        <p className="ds">{g.description}</p>
+        <div className="bt">
+          <Act url={main.url} msg={main.msg} label={main.label} cls="p" />
+          <Link className="btn s" href={`/games/${g.slug}`}>Overview</Link>
+        </div>
+        <div className="st">
+          <small>PIPELINE</small>
+          <Meter g={g} />
+          <small className="sn">{g.status.toUpperCase()}</small>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default async function GamesPage() {
   const all = await getGamesWithAdmin();
-  const pick = (slug: Game['slug']) => all.find((g) => g.slug === slug) as Game;
-  const alpha = pick('alpha');
-  const beta = pick('beta');
-  const gamma = pick('gamma');
+  const tabs = [
+    ...FILTERS.map((f) => ({ id: statusId(f), label: f, count: all.filter((g) => statusId(g.status) === statusId(f)).length })),
+    { id: 'all', label: 'All', count: all.length },
+  ];
   return (
     <PageFrame page="games" toastMs={2400}>
       <TiltEffect selector=".pj2 .art" />
@@ -59,26 +118,18 @@ export default async function GamesPage() {
             We build original worlds, deep intellectual property, and high-impact gaming experiences designed to live far beyond the screen.
           </p>
           <div className="cta rv">
-            <a className="btn p" href="#alpha">Explore the catalogue</a>
+            <a className="btn p" href="#games">Explore the catalogue</a>
             <Link className="btn s" href="/community">Follow development</Link>
           </div>
         </div>
         <div className="idx rv" role="navigation" aria-label="Projects">
-          <a href="#alpha">
-            <em>01</em>
-            <b>{alpha.name}</b>
-            <small>{alpha.status}</small>
-          </a>
-          <a href="#beta">
-            <em>02</em>
-            <b>{beta.name}</b>
-            <small>{beta.status}</small>
-          </a>
-          <a href="#gamma">
-            <em>03</em>
-            <b>{gamma.name}</b>
-            <small>{gamma.status}</small>
-          </a>
+          {all.map((g) => (
+            <a key={g.slug} href={`#${g.slug}`}>
+              <em>{g.no}</em>
+              <b>{g.name}</b>
+              <small>{g.status}</small>
+            </a>
+          ))}
         </div>
       </section>
       <section className="pp">
@@ -99,101 +150,12 @@ export default async function GamesPage() {
           })}
         </ol>
       </section>
-      <section className="stk">
-        <article className="pj2 k-a" id="alpha" style={{ "--i": "0" } as CSSProperties}>
-          <div className="art">
-            <SafeImg className="ph" src={alpha.keyArt || "/assets/alpha.jpg"} alt={`${alpha.name} key art`} />
-            <div className="tilt">
-              <div className="ring r1" />
-              <div className="ring r2" />
-              <div className="ring r3" />
-              <div className="beam" />
-              <div className="core" />
-              <span className="tagx">ASSET_01 · CLASSIFIED</span>
-            </div>
-          </div>
-          <div className="inf">
-            <div className="no" aria-hidden="true">01</div>
-            <span className="chip live">{alpha.status}</span>
-            <p className="meta">{tbd('Genre', alpha.genre)} <i>•</i> {tbd('Platform', alpha.platforms)}</p>
-            <h2>
-              <Link href="/games/alpha">{alpha.name}</Link>
-            </h2>
-            <p className="ds">{alpha.description}</p>
-            <div className="bt">
-              <Act url={alpha.links.waitlist} msg={alpha.linkMessages.waitlist} label="Join Waiting List" cls="p" />
-              <Link className="btn s" href="/games/alpha">Overview</Link>
-            </div>
-            <div className="st">
-              <small>PIPELINE</small>
-              <Meter g={alpha} />
-              <small className="sn">{alpha.status.toUpperCase()}</small>
-            </div>
-          </div>
-        </article>
-        <article className="pj2 k-b" id="beta" style={{ "--i": "1" } as CSSProperties}>
-          <div className="art">
-            <SafeImg className="ph" src={beta.keyArt || "/assets/beta.jpg"} alt={`${beta.name} key art`} />
-            <div className="tilt">
-              <div className="blk k1" />
-              <div className="blk k2" />
-              <div className="blk k3" />
-              <div className="blk k4" />
-              <div className="scan" />
-              <div className="xh" />
-              <span className="tagx">PROTO_02 · BLOCKOUT</span>
-            </div>
-          </div>
-          <div className="inf">
-            <div className="no" aria-hidden="true">02</div>
-            <span className="chip">{beta.status}</span>
-            <p className="meta">{tbd('Genre', beta.genre)} <i>•</i> {tbd('Platform', beta.platforms)}</p>
-            <h2>
-              <Link href="/games/beta">{beta.name}</Link>
-            </h2>
-            <p className="ds">{beta.description}</p>
-            <div className="bt">
-              <Link className="btn p" href="/games/beta">View Concept</Link>
-              <Act url={beta.links.play} msg={beta.linkMessages.play} label="Join Alpha" cls="s" />
-            </div>
-            <div className="st">
-              <small>PIPELINE</small>
-              <Meter g={beta} />
-              <small className="sn">{beta.status.toUpperCase()}</small>
-            </div>
-          </div>
-        </article>
-        <article className="pj2 k-g" id="gamma" style={{ "--i": "2" } as CSSProperties}>
-          <div className="art">
-            <SafeImg className="ph" src={gamma.keyArt || "/assets/gamma.jpg"} alt={`${gamma.name} key art`} />
-            <div className="tilt">
-              <div className="radar" />
-              <div className="pulse p1" />
-              <div className="pulse p2" />
-              <div className="pulse p3" />
-              <div className="dot" />
-              <span className="tagx">SIGNAL_03 · INCOMING</span>
-            </div>
-          </div>
-          <div className="inf">
-            <div className="no" aria-hidden="true">03</div>
-            <span className="chip">{gamma.status}</span>
-            <p className="meta">{tbd('Genre', gamma.genre)} <i>•</i> {tbd('Platform', gamma.platforms)}</p>
-            <h2>
-              <Link href="/games/gamma">{gamma.name}</Link>
-            </h2>
-            <p className="ds">{gamma.description}</p>
-            <div className="bt">
-              <Act url={gamma.links.waitlist} msg={gamma.linkMessages.waitlist} label="Pre-Register" cls="p" />
-              <Link className="btn s" href="/games/gamma#trailer">Trailer</Link>
-            </div>
-            <div className="st">
-              <small>PIPELINE</small>
-              <Meter g={gamma} />
-              <small className="sn">{gamma.status.toUpperCase()}</small>
-            </div>
-          </div>
-        </article>
+      <section className="stk" id="games">
+        <GameFilter tabs={tabs} initial={statusId('In Development')}>
+          {all.map((g, i) => (
+            <Card key={g.slug} g={g} i={i} />
+          ))}
+        </GameFilter>
       </section>
       <section className="fin rv">
         <div>

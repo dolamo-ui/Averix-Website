@@ -250,3 +250,7 @@ body.nomo .pg-ip .lcs .acc{opacity:.9}
 @media(max-width:560px){.pg-ip .fg{grid-template-columns:1fr}.pg-ip .fl{flex-direction:column;gap:.4rem}}
 
 @media(prefers-reduced-motion:reduce){.pg-ip *,.pg-ip *:before,.pg-ip *:after{transition:none!important;animation:none!important}}
+
+.pg-ip .pt .avatar{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;padding:.6rem .6rem 0;transition:transform .4s}
+.pg-ip .chr:hover .pt .avatar{transform:scale(1.05)}
+.pg-ip .pt.lkd .avatar{filter:brightness(0) opacity(.45) blur(1px)}

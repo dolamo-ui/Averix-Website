@@ -30,7 +30,7 @@ export const NEWS_COLLECTION = 'newsPosts';
 export const ENQUIRIES_COLLECTION = 'enquiries';
 /** Name of the Firestore collection that holds the events. */
 export const EVENTS_COLLECTION = 'events';
-/** Name of the Firestore collection that holds the game page extras (trailer, screenshots, waiting list link). One document per game: alpha, beta, gamma. */
+/** Name of the Firestore collection that holds the game page extras (trailer, screenshots, waiting list link). One document per game (alpha, plus any games added in the admin). */
 export const GAMES_COLLECTION = 'games';
 
 /** Music page: one document called `album` (the featured soundtrack, its tracklist and streaming links). */
@@ -48,6 +48,9 @@ export const CHARACTERS_COLLECTION = 'characters';
 export const IP_COLLECTION = 'ip';
 /** IP page: one document per tile in the Concept Art Vault. */
 export const IP_VAULT_COLLECTION = 'ipVault';
+
+/** Home page content: one document per "Our Universes" card (`universe1`, `universe2`, `universe3`). */
+export const HOME_COLLECTION = 'home';
 
 /** Loads Firebase only when needed (the admin page), so normal visitors never download it. */
 export async function getFirebase() {

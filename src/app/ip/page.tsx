@@ -232,7 +232,7 @@ export default async function IpPage() {
               <div>
                 <span className={`chip${[3, 4, 6].includes(g.stage) ? ' live' : ''}`}>{g.status}</span>
                 <b>{g.name}</b>
-                <p>{links[g.slug]}</p>
+                <p>{(links as Record<string, string>)[g.slug] ?? ''}</p>
               </div>
             </Link>
           ))}
