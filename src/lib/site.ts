@@ -15,9 +15,9 @@ export const DISCORD_URL = 'https://discord.gg/bwHavmJuf';
 /**
  * Public address of the site. Used for the sitemap, robots.txt and social-share (Open Graph) links.
  * When the final domain is live, set NEXT_PUBLIC_SITE_URL in your host's environment
- * (e.g. https://www.averixgames.com) or change the fallback below.
+ * (e.g. https://www.averixgames.co.za) or change the fallback below.
  */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://averixgame.netlify.app').replace(/\/$/, '');
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.averixgames.co.za').replace(/\/$/, '');
 
 /**
  * OPTIONAL automation hook. Paste a Make (or Zapier) webhook URL into NEXT_PUBLIC_ENQUIRY_WEBHOOK_URL and every new

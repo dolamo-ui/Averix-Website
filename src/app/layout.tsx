@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   icons: { icon: '/assets/logo.png' },
+  // Optional: Google Search Console "HTML tag" verification code (only the content value). Set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION in your host.
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } : undefined,
   openGraph: {
     type: 'website',
     siteName: 'Averix Games',
@@ -33,6 +35,15 @@ export const viewport: Viewport = {
   themeColor: '#05060a',
 };
 
+// Tells Google the site name and logo (helps the name "Averix Games" show in results).
+const JSON_LD = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', name: 'Averix Games', alternateName: 'Averix', url: SITE_URL },
+    { '@type': 'Organization', name: 'Averix Games', url: SITE_URL, logo: `${SITE_URL}/assets/logo.png` },
+  ],
+};
+
 const FONTS =
   'https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&family=Poppins:wght@400&display=swap';
 
@@ -46,6 +57,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link href={FONTS} rel="stylesheet" />
       </head>
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
         <SiteProvider value={settings}>{children}</SiteProvider>
       </body>
     </html>
