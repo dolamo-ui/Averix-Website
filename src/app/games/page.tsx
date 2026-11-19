@@ -108,6 +108,9 @@ export default async function GamesPage() {
     <PageFrame page="games" toastMs={2400}>
       <TiltEffect selector=".pj2 .art" />
       <section className="gh">
+        <div className="gh-img" aria-hidden="true">
+          <SafeImg src="/assets/games-hero.jpg" alt="" width={736} height={1308} fetchPriority="high" decoding="async" />
+        </div>
         <div className="gh-in">
           <span className="eyebrow rv">STUDIO CATALOGUE</span>
           <h1 className="rv">

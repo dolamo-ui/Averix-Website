@@ -32,6 +32,11 @@ body.lock{overflow:hidden}
 .pg-games .gh{min-height:100svh;display:flex;align-items:center;padding:140px var(--pad) 90px;overflow:hidden;isolation:isolate;background:radial-gradient(55% 70% at 80% 40%,rgba(123,52,255,.34),transparent 70%),radial-gradient(40% 50% at 10% 100%,rgba(0,229,255,.18),transparent 70%),var(--bg)}
 .pg-games .gh:before{content:"";position:absolute;left:-20%;right:-20%;bottom:-6%;height:62%;z-index:-1;background:linear-gradient(rgba(0,229,255,.28) 1px,transparent 1px) 0 0/100% 56px,linear-gradient(90deg,rgba(123,52,255,.35) 1px,transparent 1px) 0 0/56px 100%;transform:perspective(520px) rotateX(62deg);transform-origin:50% 100%;-webkit-mask-image:linear-gradient(transparent,#000 55%);mask-image:linear-gradient(transparent,#000 55%);animation:games-fl 6s linear infinite}
 @keyframes games-fl{to{background-position:0 56px,56px 0}}
+/* hero picture: sits on the right, fades into the page; on phones it becomes a dimmed backdrop */
+.pg-games .gh-img{position:absolute;top:0;right:0;bottom:0;width:min(52%,760px);z-index:-1;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 38%),linear-gradient(0deg,transparent 0,#000 22%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 38%),linear-gradient(0deg,transparent 0,#000 22%);mask-composite:intersect}
+.pg-games .gh-img:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,10,.55),transparent 30%),radial-gradient(60% 60% at 70% 50%,rgba(123,52,255,.18),transparent 70%)}
+.pg-games .gh-img img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%;opacity:.9}
+@media (max-width:900px){.pg-games .gh-img{width:100%;opacity:.3;-webkit-mask-image:linear-gradient(0deg,transparent 0,#000 40%);mask-image:linear-gradient(0deg,transparent 0,#000 40%)}}
 .pg-games .gh-in{max-width:980px}
 .pg-games .gh h1{font-size:clamp(2.2rem,6.5vw,6rem);line-height:.92}.pg-games .gh h1 span{display:block}
 .pg-games .gh h1 .o{color:transparent;-webkit-text-stroke:1.5px var(--cy);text-shadow:0 0 40px rgba(0,229,255,.35)}
